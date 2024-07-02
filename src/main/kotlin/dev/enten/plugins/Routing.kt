@@ -1,4 +1,4 @@
-package example.com.plugins
+package dev.enten.plugins
 
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.ktor.http.*

@@ -1,6 +1,6 @@
-package example.com
+package dev.enten
 
-import example.com.plugins.*
+import dev.enten.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*

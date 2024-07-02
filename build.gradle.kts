@@ -7,7 +7,7 @@ plugins {
     id("io.ktor.plugin") version "2.3.12"
 }
 
-group = "enten.dev"
+group = "dev.enten"
 version = "0.0.1"
 
 application {

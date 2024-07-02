@@ -1,4 +1,4 @@
-package example.com.plugins
+package dev.enten.plugins
 
 import io.ktor.http.*
 import io.ktor.http.content.*

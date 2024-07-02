@@ -1,13 +1,13 @@
-package example.com
+package dev.enten
 
-import example.com.plugins.*
+import dev.enten.plugins.*
 import io.ktor.server.application.*
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
 }
 
-fun Application.module() {
+fun Application.module(testing: Boolean = false) {
     configureSerialization()
     configureMonitoring()
     configureHTTP()
