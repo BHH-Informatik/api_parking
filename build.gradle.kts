@@ -22,6 +22,8 @@ repositories {
 }
 
 dependencies {
+
+	// Auto generated dependencies from Ktor 
     implementation("io.ktor:ktor-server-content-negotiation-jvm")
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-serialization-gson-jvm")
@@ -46,4 +48,8 @@ dependencies {
     implementation("io.ktor:ktor-server-config-yaml")
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
+
+	// Add your dependencies here
+	implementation("mysql:mysql-connector-java:8.0.29")
+	implementation("com.zaxxer:HikariCP:5.0.1")
 }
