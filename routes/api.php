@@ -16,12 +16,12 @@ Route::get('/', function (Request $request) {
 
 
 Route::post("/dev", function (Request $request) {
-    // $params = $request->validate([
-    //     'name' => 'required|string',
-    // ]);
+    $params = $request->validate([
+        'name' => 'required|string',
+    ]);
 
     return response()->json([
         'success' => true,
-        'message' => 'Hello ',
+        'message' => 'Hello, ' . $params['name'],
     ], 200);
 });
