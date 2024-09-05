@@ -13,20 +13,21 @@ class AuthController extends Controller
     public function register(Request $request){
 
         $params = $request->validate([
-
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users|max:255',
             'password' => 'required|string|confirmed|min:8',
-
         ]);
 
         $params['password'] = Hash::make($params['password']);
-        $user = User::create($params);
 
-        Auth::login($user);
-        
-        return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
+        try {
+            $user = User::create($params);
+            Auth::login($user);
+            return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'User registration failed', 'error' => $e->getMessage()], 400);
+        }
     }
 
     public function login(Request $request){
@@ -40,9 +41,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Login successful', 'user' => Auth::user()], 200);
         }
 
-        throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect.'],
-        ]);
+        return response()->json(['message' => 'The provided credentials are incorrect.'], 401);
     }
 
     public function logout()
