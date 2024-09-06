@@ -12,7 +12,7 @@ services:
       - .env.docker
     # Setze die Volumes für den Container.
     volumes:
-      - ./:/app
+      - ./database:/app/database
     # Leite den container port 80 auf den gegebenen Host port um
     ports:
       - ${EXPOSED_BACKEND_PORT:-8747}:80
