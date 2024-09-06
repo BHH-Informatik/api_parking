@@ -1,44 +1,38 @@
-# Erstelle einen neuen composer Container
-FROM composer:latest AS build
-# Setze die Umgebungsvariable COMPOSER_ALLOW_SUPERUSER auf 1
-ENV COMPOSER_ALLOW_SUPERUSER 1
-# Setze das Arbeitsverzeichnis auf /app
-WORKDIR /app
-# Kopiere den php-extension-installer in den Container
-COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
-# Kopiere das backend in den Container
-# COPY ./ /app
-COPY composer.json composer.lock /app/
-# Update die Abhängigkeiten
-RUN composer update
-# Installiere die Abhängigkeiten
-RUN cd /app && apk add --no-cache libpng libpng-dev \
-    && docker-php-ext-install gd
-RUN composer install --optimize-autoloader \
-        --no-progress \
-        --quiet \
-        --no-interaction
+# Use PHP with Apache as the base image
+FROM php:8.2-apache as web
 
-# Erstelle einen php apache Container mit der neusten Version
-FROM php:apache-bullseye AS production
-# Setze die Zeitzone auf UTC
-ENV TZ="UTC"
-# Setze das Arbeitsverzeichnis auf /app
-WORKDIR /app
-# Kopiere die backend datein in den Container
-COPY ./ /app
-# Kopiere die vendor datein aus der Build stage in den Container
-COPY --from=build /app/vendor /app/vendor
+# Install Additional System Dependencies
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip
 
-# if vendor is missing, throw error
-RUN if [ ! -d /app/vendor ]; then echo "Vendor is missing"; exit 1; fi
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Update den Container, konfiguriere die php extensions und installiere die Abhängigkeiten. Danach setze den Besitzer auf www-data und setze die apache config
-RUN apt-get update -y && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zlib1g-dev libicu-dev g++ \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql intl \
-    && chown -R www-data:www-data /app \
-    && echo '<VirtualHost *:80>\n DocumentRoot /app/public\n <Directory /app/public>\n AllowOverride All\n Require all granted\n </Directory>\n</VirtualHost>' > /etc/apache2/sites-available/000-default.conf \
-    && a2enmod rewrite
-# Setze den default user auf www-data
-USER www-data
+# Enable Apache mod_rewrite for URL rewriting
+RUN a2enmod rewrite
+
+# Install PHP extensions
+RUN docker-php-ext-install pdo_mysql zip
+
+# Configure Apache DocumentRoot to point to Laravel's public directory
+# and update Apache configuration files
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Copy the application code
+COPY . /var/www/html
+
+# Set the working directory
+WORKDIR /var/www/html
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install project dependencies
+RUN composer install
+
+
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
