@@ -95,6 +95,14 @@ jobs:
 
           " > .env
 
+      - name: copy project files to src folder
+        run: |
+          mkdir -p src
+          # ignore .git and .github
+          cp -r ./* src/
+          rm -rf src/.git
+          rm -rf src/.github
+
       - name: copy files to target server via scp
         uses: appleboy/scp-action@v0.1.4
         with:
@@ -104,7 +112,7 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
 
           # copy all besides .git and .github
-          source: "./*,!./.git,!./.github"
+          source: "./src/*"
           target: "${{ vars.DEPLOY_FOLDER }}/"
           overwrite: true
 
