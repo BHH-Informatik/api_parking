@@ -98,8 +98,8 @@ jobs:
 
       - name: copy project files to src folder
         run: |
-          mkdir -p src
-          rsync -av --exclude='.git' --exclude='.github' ./ src/
+          mkdir -p ./src
+          rsync -av --exclude='.git' --exclude='.github' ./ ./src/
 
       - name: copy files to target server via scp
         uses: appleboy/scp-action@v0.1.4
@@ -108,7 +108,7 @@ jobs:
           port: ${{ vars.DEPLOY_HOST_PORT }}
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_KEY }}
-          source: "./src"
+          source: "./src/*"
           target: "${{ vars.DEPLOY_FOLDER }}/"
           overwrite: true
 
