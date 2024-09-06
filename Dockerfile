@@ -7,14 +7,17 @@ WORKDIR /app
 # Kopiere den php-extension-installer in den Container
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 # Kopiere das backend in den Container
+# COPY ./ /app
 COPY composer.json composer.lock /app/
+# Update die Abhängigkeiten
+RUN composer update
 # Installiere die Abhängigkeiten
-RUN composer install --optimize-autoloader --no-progress --quiet --no-interaction
-# Kopiere das restliche Backend in den Container
-COPY ./ /app
-# Installiere zusätzliche PHP-Erweiterungen
-RUN apk add --no-cache libpng libpng-dev \
+RUN cd /app && apk add --no-cache libpng libpng-dev \
     && docker-php-ext-install gd
+RUN composer install --optimize-autoloader \
+        --no-progress \
+        --quiet \
+        --no-interaction
 
 # Erstelle einen php apache Container mit der neusten Version
 FROM php:apache-bullseye AS production
@@ -39,5 +42,3 @@ RUN apt-get update -y && apt-get install -y libpng-dev libjpeg-dev libfreetype6-
     && a2enmod rewrite
 # Setze den default user auf www-data
 USER www-data
-
-EXPOSE 80
