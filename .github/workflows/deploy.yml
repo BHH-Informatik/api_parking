@@ -102,7 +102,9 @@ jobs:
           port: ${{ vars.DEPLOY_HOST_PORT }}
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_KEY }}
-          source: "./*"
+
+          # copy all besides .git and .github
+          source: "./*,!./.git,!./.github"
           target: "${{ vars.DEPLOY_FOLDER }}/"
           overwrite: true
 
