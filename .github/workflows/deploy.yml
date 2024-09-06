@@ -131,4 +131,3 @@ jobs:
             yes | docker system prune
             docker compose build
             docker compose up -d
-            docker compose exec ${{ vars.APP_NAME }}.00 php artisan migrate
