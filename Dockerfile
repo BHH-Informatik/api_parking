@@ -28,6 +28,7 @@ WORKDIR /app
 COPY ./ /app
 # Kopiere die vendor datein aus der Build stage in den Container
 COPY --from=build /app/vendor ./vendor
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 # Update den Container, konfiguriere die php extensions und installiere die Abhängigkeiten. Danach setze den Besitzer auf www-data und setze die apache config
 RUN apt-get update -y && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zlib1g-dev libicu-dev g++ \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \

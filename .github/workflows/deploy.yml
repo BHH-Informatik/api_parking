@@ -29,6 +29,7 @@ jobs:
           echo "
 
           APP_NAME=${{ vars.APP_NAME }}
+          APP_VERSION=${{ github.run_number }}
           APP_ENV=local
           APP_KEY=base64:NfrLKrgkNcDdJ3QNK281MnR63egocfl0lMcGDit9m9I=
           APP_DEBUG=true
