@@ -41,7 +41,5 @@ RUN apt-get update -y && apt-get install -y libpng-dev libjpeg-dev libfreetype6-
     && a2enmod rewrite
 # Setze den default user auf deployer
 USER deployer
-# if not exists create database.sqlite
-RUN touch /app/database/database.sqlite
 
 EXPOSE 80

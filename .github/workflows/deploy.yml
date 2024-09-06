@@ -121,6 +121,12 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             cd ${{ vars.DEPLOY_FOLDER }}/src
+
+            # create database if not exists
+            touch database/database.sqlite
+            # Set correct permissions for the database file and its containing directory
+            chmod -R 777 database
+
             docker compose build
             docker compose down
             docker compose up -d
