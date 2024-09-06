@@ -7,7 +7,7 @@ WORKDIR /app
 # Kopiere den php-extension-installer in den Container
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 # Kopiere das backend in den Container
-COPY ./ ./
+COPY ./ /app
 # Update die Abhängigkeiten
 RUN composer update
 # Installiere die Abhängigkeiten
@@ -37,8 +37,6 @@ RUN apt-get update -y && apt-get install -y libpng-dev libjpeg-dev libfreetype6-
     && a2enmod rewrite
 # Setze den default user auf www-data
 USER www-data
-# Öffne Port 80
-
 # if not exists create database.sqlite
 RUN touch /app/database/database.sqlite
 
