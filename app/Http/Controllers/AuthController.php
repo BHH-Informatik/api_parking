@@ -6,7 +6,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -23,6 +22,7 @@ class AuthController extends Controller
 
         try {
             $user = User::create($params);
+            $user->assignRole('user');
             Auth::login($user);
             return response()->json(['message' => 'User registered successfully', 'user' => $user], 201);
         } catch (\Exception $e) {
