@@ -97,8 +97,6 @@ jobs:
 
       - name: copy project files to src folder
         run: |
-          mkdir -p src
-          # ignore .git and .github
           cp -r ./* src/
           rm -rf src/.git
           rm -rf src/.github
