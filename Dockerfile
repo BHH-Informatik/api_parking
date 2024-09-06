@@ -32,14 +32,14 @@ COPY --from=build /app/vendor /app/vendor
 # if vendor is missing, throw error
 RUN if [ ! -d /app/vendor ]; then echo "Vendor is missing"; exit 1; fi
 
-# Update den Container, konfiguriere die php extensions und installiere die Abhängigkeiten. Danach setze den Besitzer auf deployer und setze die apache config
+# Update den Container, konfiguriere die php extensions und installiere die Abhängigkeiten. Danach setze den Besitzer auf www-data und setze die apache config
 RUN apt-get update -y && apt-get install -y libpng-dev libjpeg-dev libfreetype6-dev zlib1g-dev libicu-dev g++ \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo pdo_mysql intl \
-    && chown -R deployer:deployer /app \
+    && chown -R www-data:www-data /app \
     && echo '<VirtualHost *:80>\n DocumentRoot /app/public\n <Directory /app/public>\n AllowOverride All\n Require all granted\n </Directory>\n</VirtualHost>' > /etc/apache2/sites-available/000-default.conf \
     && a2enmod rewrite
-# Setze den default user auf deployer
-USER deployer
+# Setze den default user auf www-data
+USER www-data
 
 EXPOSE 80
