@@ -23,7 +23,7 @@ Route::get('/', function (Request $request) {
     ], 200);
 })->name('api.index');
 
-Route::get("/health", function () {
+Route::get("/health", function (Request $request) {
 
     $dbHealth = false;
     try {
@@ -36,7 +36,7 @@ Route::get("/health", function () {
         'success' => true,
         'message' => 'ok',
     ], 200);
-});
+})->name('api.health');
 
 
 Route::post("/dev", function (Request $request) {
