@@ -121,7 +121,8 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             cd ${{ vars.DEPLOY_FOLDER }}/src
+            docker compose build
             docker compose down
-            docker compose up -d --build
+            docker compose up -d
             docker compose exec ${{ vars.APP_NAME }}.00 php artisan migrate
             yes | docker system prune
