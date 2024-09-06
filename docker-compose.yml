@@ -6,7 +6,7 @@ services:
     # Baue den Container aus dem Dockerfile
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: Dockerfile
     # Setze die Datenbank Umgebungsvariablen
     env_file:
       - .env.docker
