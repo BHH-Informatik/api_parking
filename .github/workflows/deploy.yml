@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: create .env.docker file
         run: |
@@ -108,9 +108,7 @@ jobs:
           port: ${{ vars.DEPLOY_HOST_PORT }}
           username: ${{ secrets.DEPLOY_USERNAME }}
           key: ${{ secrets.DEPLOY_KEY }}
-
-          # copy all besides .git and .github
-          source: "./src/*"
+          source: "./src"
           target: "${{ vars.DEPLOY_FOLDER }}/"
           overwrite: true
 
