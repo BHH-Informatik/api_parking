@@ -99,7 +99,7 @@ jobs:
       - name: copy project files to src folder
         run: |
           mkdir -p ./src
-          rsync -av --exclude='.git' --exclude='.github' ./ ./src/
+          rsync -av --exclude='.git' --exclude='.github' --exclude='src' ./ ./src/
 
       - name: copy files to target server via scp
         uses: appleboy/scp-action@v0.1.4
