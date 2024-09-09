@@ -7,7 +7,42 @@ use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckAdminRole;
 use App\Http\Middleware\CheckAuth;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
+Route::get('/', function (Request $request) {
+
+    $dbHealth = false;
+    try {
+        \DB::connection()->getPDO();
+        \DB::connection()->getDatabaseName();
+        $dbHealth = true;
+    } catch (\Exception $e) {
+        $dbHealth = false;
+    }
+    return response()->json([
+        'success' => true,
+        'service' => env('APP_NAME', 'api_parking'),
+        'version' => env('APP_VERSION', '0.0.1'),
+        'stage' => env('APP_STAGE', 'development'),
+        'health' => $dbHealth ? 'ok' : 'false',
+        'ip' => $request->header()['x-forwarded-for'] ?? 'unknown',
+    ], 200);
+})->name('api.index');
+
+Route::get("/health", function (Request $request) {
+
+    $dbHealth = false;
+    try {
+        \DB::connection()->getPDO();
+        \DB::connection()->getDatabaseName();
+    } catch (\Exception $e) {
+        return response()->json(['health' => false, 'module' => 'DB'], 500);
+    }
+    return response()->json([
+        'success' => true,
+        'message' => 'ok',
+    ], 200);
+})->name('api.health');
 
 Route::prefix("auth")->group(function() {
     Route::post("register", [AuthController::class, "register"])->name("api.auth.register");
