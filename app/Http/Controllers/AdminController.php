@@ -43,6 +43,7 @@ class AdminController extends Controller
 
         $request -> validate([
             'user_id' => 'required|integer',
+            'email' => 'required|string|email'
         ]);
 
         try {
