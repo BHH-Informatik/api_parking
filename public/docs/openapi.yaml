@@ -1,12 +1,304 @@
 openapi: 3.0.3
 info:
-  title: api_parking
+  title: 'Parking Docs'
   description: ''
   version: 1.0.0
 servers:
   -
-    url: 'http://localhost'
+    url: parking.enten.dev
 paths:
+  /api/auth/register:
+    post:
+      summary: Register
+      operationId: register
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  access_token: 9hC4K....gMzp8nQCrgw
+                  token_type: bearer
+                  expires_in: 604800
+                  user:
+                    first_name: John
+                    last_name: Doe
+                    email: john@example.com
+                    updated_at: '2021-09-29T14:00:00.000000Z'
+                    created_at: '2021-09-29T14:00:00.000000Z'
+                    id: 1
+                properties:
+                  access_token:
+                    type: string
+                    example: 9hC4K....gMzp8nQCrgw
+                  token_type:
+                    type: string
+                    example: bearer
+                  expires_in:
+                    type: integer
+                    example: 604800
+                  user:
+                    type: object
+                    properties:
+                      first_name:
+                        type: string
+                        example: John
+                      last_name:
+                        type: string
+                        example: Doe
+                      email:
+                        type: string
+                        example: john@example.com
+                      updated_at:
+                        type: string
+                        example: '2021-09-29T14:00:00.000000Z'
+                      created_at:
+                        type: string
+                        example: '2021-09-29T14:00:00.000000Z'
+                      id:
+                        type: integer
+                        example: 1
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  message: Unauthorized
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: User-First-Name.
+                  example: John
+                last_name:
+                  type: string
+                  description: User-Last-Name.
+                  example: Doe
+                email:
+                  type: string
+                  description: User-Email.
+                  example: john@example.com
+                password:
+                  type: string
+                  description: User-Password.
+                  example: '12345678'
+                password_confirmation:
+                  type: string
+                  description: User-Password-Confirmation.
+                  example: "12345678\n\nRegister a new user"
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+                - password_confirmation
+      security: []
+  /api/auth/login:
+    post:
+      summary: Login
+      operationId: login
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  access_token: 9hC4K....gMzp8nQCrgw
+                  token_type: bearer
+                  expires_in: 604800
+                  user:
+                    first_name: John
+                    last_name: Doe
+                    email: john@example.com
+                    updated_at: '2021-09-29T14:00:00.000000Z'
+                    created_at: '2021-09-29T14:00:00.000000Z'
+                    id: 1
+                properties:
+                  access_token:
+                    type: string
+                    example: 9hC4K....gMzp8nQCrgw
+                  token_type:
+                    type: string
+                    example: bearer
+                  expires_in:
+                    type: integer
+                    example: 604800
+                  user:
+                    type: object
+                    properties:
+                      first_name:
+                        type: string
+                        example: John
+                      last_name:
+                        type: string
+                        example: Doe
+                      email:
+                        type: string
+                        example: john@example.com
+                      updated_at:
+                        type: string
+                        example: '2021-09-29T14:00:00.000000Z'
+                      created_at:
+                        type: string
+                        example: '2021-09-29T14:00:00.000000Z'
+                      id:
+                        type: integer
+                        example: 1
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  message: Unauthorized
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Unauthorized
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User-Email.
+                  example: foo@bar.de
+                password:
+                  type: string
+                  description: User-Password.
+                  example: '123456'
+              required:
+                - email
+                - password
+      security: []
+  /api/auth/logout:
+    post:
+      summary: Logout
+      operationId: logout
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: Sucess
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{'message' => 'Logout successful'}"
+      tags:
+        - Authentication
+  /api/auth/me:
+    get:
+      summary: 'Get Self'
+      operationId: getSelf
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  id: 1
+                  first_name: John
+                  last_name: Doe
+                  email: john@example.com
+                  email_verified_at: null
+                  created_at: '2021-09-29T14:00:00.000000Z'
+                  updated_at: '2021-09-29T14:00:00.000000Z'
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  first_name:
+                    type: string
+                    example: John
+                  last_name:
+                    type: string
+                    example: Doe
+                  email:
+                    type: string
+                    example: john@example.com
+                  email_verified_at:
+                    type: string
+                    example: null
+                  created_at:
+                    type: string
+                    example: '2021-09-29T14:00:00.000000Z'
+                  updated_at:
+                    type: string
+                    example: '2021-09-29T14:00:00.000000Z'
+      tags:
+        - Authentication
+  /api/auth/deleteMe:
+    get:
+      summary: 'Delete Self'
+      operationId: deleteSelf
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: Sucess
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "{'message' => 'User successfully deleted'}"
+      tags:
+        - Authentication
+  /api/docs:
+    get:
+      summary: ''
+      operationId: getApiDocs
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: ''
+      tags:
+        - Endpoints
   /api/health:
     get:
       summary: ''
@@ -32,268 +324,6 @@ paths:
                     example: ok
       tags:
         - Endpoints
-  /api/auth/register:
-    post:
-      summary: ''
-      operationId: postApiAuthRegister
-      description: ''
-      parameters: []
-      responses: {  }
-      tags:
-        - Endpoints
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  description: 'Must not be greater than 255 characters.'
-                  example: jbgtgxdierdlebjwsxc
-                last_name:
-                  type: string
-                  description: 'Must not be greater than 255 characters.'
-                  example: lkhqatdhqj
-                email:
-                  type: string
-                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
-                  example: isporer@example.net
-                password:
-                  type: string
-                  description: 'Must be at least 8 characters.'
-                  example: "`7l?Y|'E^I"
-              required:
-                - first_name
-                - last_name
-                - email
-                - password
-  /api/auth/login:
-    post:
-      summary: ''
-      operationId: postApiAuthLogin
-      description: ''
-      parameters: []
-      responses: {  }
-      tags:
-        - Endpoints
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  description: 'Must be a valid email address.'
-                  example: barney69@example.com
-                password:
-                  type: string
-                  description: ''
-                  example: 'xQL^lO|:Am"'
-              required:
-                - email
-                - password
-  /api/auth/logout:
-    post:
-      summary: ''
-      operationId: postApiAuthLogout
-      description: ''
-      parameters: []
-      responses: {  }
-      tags:
-        - Endpoints
-  /api/auth/me:
-    get:
-      summary: ''
-      operationId: getApiAuthMe
-      description: ''
-      parameters: []
-      responses:
-        403:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: Unauthorized
-                properties:
-                  message:
-                    type: string
-                    example: Unauthorized
-      tags:
-        - Endpoints
-  /api/auth/deleteMe:
-    get:
-      summary: ''
-      operationId: getApiAuthDeleteMe
-      description: ''
-      parameters: []
-      responses:
-        403:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: Unauthorized
-                properties:
-                  message:
-                    type: string
-                    example: Unauthorized
-      tags:
-        - Endpoints
-  /api/admin/user:
-    post:
-      summary: ''
-      operationId: postApiAdminUser
-      description: ''
-      parameters: []
-      responses: {  }
-      tags:
-        - Endpoints
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  description: 'Must not be greater than 255 characters.'
-                  example: ptsndccluburmsrob
-                last_name:
-                  type: string
-                  description: 'Must not be greater than 255 characters.'
-                  example: ixilbkrhjp
-                email:
-                  type: string
-                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
-                  example: valentin.erdman@example.com
-                password:
-                  type: string
-                  description: 'Must be at least 8 characters.'
-                  example: 5)yZ/cu
-                role:
-                  type: string
-                  description: ''
-                  example: natus
-              required:
-                - first_name
-                - last_name
-                - email
-                - password
-    get:
-      summary: ''
-      operationId: getApiAdminUser
-      description: ''
-      parameters: []
-      responses:
-        403:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: Unauthorized
-                properties:
-                  message:
-                    type: string
-                    example: Unauthorized
-      tags:
-        - Endpoints
-  '/api/admin/user/{id}':
-    get:
-      summary: ''
-      operationId: getApiAdminUserId
-      description: ''
-      parameters: []
-      responses:
-        403:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: Unauthorized
-                properties:
-                  message:
-                    type: string
-                    example: Unauthorized
-      tags:
-        - Endpoints
-    put:
-      summary: ''
-      operationId: putApiAdminUserId
-      description: ''
-      parameters: []
-      responses: {  }
-      tags:
-        - Endpoints
-      requestBody:
-        required: false
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                first_name:
-                  type: string
-                  description: 'Must not be greater than 255 characters.'
-                  example: tehroemurtb
-                last_name:
-                  type: string
-                  description: 'Must not be greater than 255 characters.'
-                  example: od
-                email:
-                  type: string
-                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
-                  example: ekulas@example.org
-    delete:
-      summary: ''
-      operationId: deleteApiAdminUserId
-      description: ''
-      parameters: []
-      responses: {  }
-      tags:
-        - Endpoints
-    parameters:
-      -
-        in: path
-        name: id
-        description: 'The ID of the user.'
-        example: voluptates
-        required: true
-        schema:
-          type: string
-  /api/admin/logs:
-    get:
-      summary: ''
-      operationId: getApiAdminLogs
-      description: ''
-      parameters: []
-      responses:
-        403:
-          description: ''
-          content:
-            application/json:
-              schema:
-                type: object
-                example:
-                  message: Unauthorized
-                properties:
-                  message:
-                    type: string
-                    example: Unauthorized
-      tags:
-        - Endpoints
   /api/user/email:
     put:
       summary: ''
@@ -313,7 +343,7 @@ paths:
                 email:
                   type: string
                   description: 'Must be a valid email address. Must not be greater than 255 characters.'
-                  example: claudine.heathcote@example.com
+                  example: constance66@example.net
               required:
                 - email
   /api/user/name:
@@ -335,11 +365,11 @@ paths:
                 first_name:
                   type: string
                   description: 'Must not be greater than 255 characters.'
-                  example: utwzw
+                  example: swejgdntfafujfeqlq
                 last_name:
                   type: string
                   description: 'Must not be greater than 255 characters.'
-                  example: rgpsfagoiqhzxhamewzc
+                  example: obdqvzqiowz
               required:
                 - first_name
                 - last_name
@@ -362,17 +392,348 @@ paths:
                 old_password:
                   type: string
                   description: ''
-                  example: repellendus
+                  example: numquam
                 new_password:
                   type: string
                   description: 'Must be at least 8 characters.'
-                  example: upbgxfldppvbzgayoeszpzbb
+                  example: sqgrsjowwnhdepmipngqko
               required:
                 - old_password
                 - new_password
+  /api/admin/logs:
+    get:
+      summary: 'Get Logs'
+      operationId: getLogs
+      description: ''
+      parameters:
+        -
+          in: query
+          name: limit
+          description: 'optional Limit.'
+          example: 50
+          required: false
+          schema:
+            type: integer
+            description: 'optional Limit.'
+            example: 50
+        -
+          in: query
+          name: offset
+          description: 'optional Offset.'
+          example: 0
+          required: false
+          schema:
+            type: integer
+            description: 'optional Offset.'
+            example: 0
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Getting log information was successful'
+                  log:
+                    -
+                      id: 1
+                      user_id: 1
+                      action: 'User created'
+                      created_at: '2021-09-29T14:00:00.000000Z'
+                      updated_at: '2021-09-29T14:00:00.000000Z'
+                properties:
+                  message:
+                    type: string
+                    example: 'Getting log information was successful'
+                  log:
+                    type: array
+                    example:
+                      -
+                        id: 1
+                        user_id: 1
+                        action: 'User created'
+                        created_at: '2021-09-29T14:00:00.000000Z'
+                        updated_at: '2021-09-29T14:00:00.000000Z'
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        user_id:
+                          type: integer
+                          example: 1
+                        action:
+                          type: string
+                          example: 'User created'
+                        created_at:
+                          type: string
+                          example: '2021-09-29T14:00:00.000000Z'
+                        updated_at:
+                          type: string
+                          example: '2021-09-29T14:00:00.000000Z'
+      tags:
+        - Log
+  /api/admin/user:
+    post:
+      summary: 'Create User'
+      operationId: createUser
+      description: ''
+      parameters: []
+      responses:
+        201:
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '{"message":"User successfully created","user":{"first_name":"John","last_name":"Doe","email":"'
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'User creation failed'
+                  error: ...
+                properties:
+                  message:
+                    type: string
+                    example: 'User creation failed'
+                  error:
+                    type: string
+                    example: ...
+      tags:
+        - 'User Management'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: User-First-Name.
+                  example: John
+                last_name:
+                  type: string
+                  description: User-Last-Name.
+                  example: Doe
+                email:
+                  type: string
+                  description: User-Email.
+                  example: john@example.com
+                password:
+                  type: string
+                  description: User-Password.
+                  example: '12345678'
+                role:
+                  type: string
+                  description: 'optional User-Role.'
+                  example: admin
+                password_confirmation:
+                  type: string
+                  description: User-Password-Confirmation.
+                  example: '12345678'
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+                - password_confirmation
+    get:
+      summary: 'Get Users'
+      operationId: getUsers
+      description: ''
+      parameters:
+        -
+          in: query
+          name: limit
+          description: 'optional Limit.'
+          example: 50
+          required: false
+          schema:
+            type: integer
+            description: 'optional Limit.'
+            example: 50
+        -
+          in: query
+          name: offset
+          description: 'optional Offset.'
+          example: 0
+          required: false
+          schema:
+            type: integer
+            description: 'optional Offset.'
+            example: 0
+      responses:
+        200:
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '{"message":"Getting users information was successful","users":[{"first_name":"John","last_name":"Doe","email":"'
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Getting users information failed'
+                  error: ...
+                properties:
+                  message:
+                    type: string
+                    example: 'Getting users information failed'
+                  error:
+                    type: string
+                    example: ...
+      tags:
+        - 'User Management'
+  '/api/admin/user/{id}':
+    get:
+      summary: 'Get User'
+      operationId: getUser
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '{"message":"Getting user information was successful","user":{"first_name":"John","last_name":"Doe","email":"'
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Getting user information failed'
+                  error: ...
+                properties:
+                  message:
+                    type: string
+                    example: 'Getting user information failed'
+                  error:
+                    type: string
+                    example: ...
+      tags:
+        - 'User Management'
+    put:
+      summary: 'Update User'
+      operationId: updateUser
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: '{"id":1,"first_name":"John","last_name":"Doe","email":"john@example.com", ...}'
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'User update failed'
+                  error: ...
+                properties:
+                  message:
+                    type: string
+                    example: 'User update failed'
+                  error:
+                    type: string
+                    example: ...
+      tags:
+        - 'User Management'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: 'optional User-First-Name.'
+                  example: John
+                last_name:
+                  type: string
+                  description: 'optional User-Last-Name.'
+                  example: Doe
+                email:
+                  type: string
+                  description: 'optional User-Email.'
+                  example: john@example.com
+    delete:
+      summary: 'Delete User'
+      operationId: deleteUser
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'User successfully deleted'
+                properties:
+                  message:
+                    type: string
+                    example: 'User successfully deleted'
+        400:
+          description: 'Bad Request'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Deletion of user failed'
+                  error: ...
+                properties:
+                  message:
+                    type: string
+                    example: 'Deletion of user failed'
+                  error:
+                    type: string
+                    example: ...
+      tags:
+        - 'User Management'
+    parameters:
+      -
+        in: path
+        name: id
+        description: User-ID.
+        example: '1'
+        required: true
+        schema:
+          type: string
 tags:
   -
+    name: Authentication
+    description: ''
+  -
     name: Endpoints
+    description: ''
+  -
+    name: Log
+    description: ''
+  -
+    name: 'User Management'
     description: ''
 components:
   securitySchemes:

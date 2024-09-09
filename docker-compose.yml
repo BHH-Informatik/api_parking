@@ -41,12 +41,12 @@ services:
     ports:
       - ${EXPOSED_ADMINER_PORT:-8748}:8080
 
-  swagger:
-    container_name: ${APP_NAME}.swagger
-    restart: unless-stopped
-    image: swaggerapi/swagger-ui
-    environment:
-      - SWAGGER_JSON_URL=/api/docs
-      - BASE_URL=/docs
-    ports:
-      - ${EXPOSED_SWAGGER_PORT:-8749}:8080
+#   swagger:
+#     container_name: ${APP_NAME}.swagger
+#     restart: unless-stopped
+#     image: swaggerapi/swagger-ui
+#     environment:
+#       - SWAGGER_JSON_URL=/api/docs
+#       - BASE_URL=/docs
+#     ports:
+#       - ${EXPOSED_SWAGGER_PORT:-8749}:8080
