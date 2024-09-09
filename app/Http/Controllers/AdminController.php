@@ -5,28 +5,59 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
-class AdminController extends Controller
-{
-    public function getUser(Request $request) {
+class AdminController extends Controller {
 
-        $request -> validate([
-            'user_id' => 'required|integer',
+    public function createUser(Request $request) {
+
+        $params = $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users|max:255',
+            'password' => 'required|string|confirmed|min:8',
+            'role' => 'nullable|string|exists:roles,name'
         ]);
 
+        $params['password'] = Hash::make($params['password']);
+        $user = User::create($params);
+
+        if(isset($params['role'])){
+            $user->assignRole($params['role']);
+        }else{
+            $user->assignRole('user');
+        }
+
+        return response()->json(['message' => 'User successfully created', 'user' => $user], 201);
+
+    }
+
+    public function getUser(Request $request, $id) {
         try {
-            return response()->json(['message' => 'Getting user information was successful', 'user' => User::findOrFail($request->user_id)], 200);
+
+            return response()->json(['message' => 'Getting user information was successful', 'user' => User::findOrFail($id)], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Getting user information failed', 'error' => $e->getMessage()], 400);
         }
     }
 
     public function getUsers() {
-        return response()->json(['message' => 'Getting users information was successful', 'users' => User::all()], 200);
+
+
+
+
+        $limit = $request->input('limit', 50);
+        $offset = $request->input('offset', 0);
+
+        $users = User::limit($limit)->offset($offset)->get();
+
+        return response()->json([
+            'message' => 'Getting users information was successful',
+            'users' => $users
+        ], 200);
     }
 
     public function deleteUser(Request $request, $id) {
-
         try {
             User::findOrFail($id)->delete();
             return response()->json(['message' => 'User successfully deleted'], 200);
@@ -35,23 +66,21 @@ class AdminController extends Controller
         }
     }
 
-    public function changeEmail(Request $request) {
+    public function updateUser(Request $request, $id) {
 
-        $request -> validate([
-            'user_id' => 'required|integer',
-            'email' => 'required|string|email'
+        $user = User::findOrFail($id);
+
+        $params = $request->validate([
+            'first_name' => 'nullable|string|max:255',
+            'last_name' => 'nullable|string|max:255',
+            'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->id)],
         ]);
 
-        try {
-            $user = User::findOrFail($request->user_id);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'User not found', 'error' => $e->getMessage()], 400);
+        $user->fill($params);
+        if ($user->isDirty()) {
+            $user->save();
         }
 
-        $user->update([
-            'email' => $request->email
-        ]);
-
-        return response()->json(['message' => 'Email successfully changed'], 200);
+        return response()->json($user);
     }
 }

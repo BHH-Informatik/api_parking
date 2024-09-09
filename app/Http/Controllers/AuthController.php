@@ -67,6 +67,18 @@ class AuthController extends Controller
         return response()->json(['message' => 'Logout successful'], 200);
     }
 
+    public function me() {
+        return response()->json(auth()->user());
+    }
+
+    public function deleteMe() {
+        $user = auth()->user();
+        Auth::logout();
+        $user->delete();
+
+        return response()->json(['message' => 'User successfully deleted'], 200);
+    }
+
     protected function respondWithToken($token, $user = null){
 
         if($user == null){
