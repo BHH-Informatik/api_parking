@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Middleware\LogActions;
 
-Route::group(['middleware' => [LogActions::class]], function(){
+Route::group(['middleware' => [LogActions::class, 'api']], function(){
 
     Route::get('/', function (Request $request) {
 
@@ -54,14 +54,16 @@ Route::group(['middleware' => [LogActions::class]], function(){
         Route::post("logout", [AuthController::class, "logout"])->name("api.auth.logout")->middleware(CheckAuth::class);
     });
 
-Route::group(['middleware' => [CheckAuth::class, CheckAdminRole::class], 'prefix' => 'admin'], function() {
-    Route::post("assign", [PermissionController::class, "assignAdminRole"])->name("api.admin.assignAdminRole");
-    Route::post("remove", [PermissionController::class, "removeAdminRole"])->name("api.admin.removeAdminRole");
-    Route::get("user", [AdminController::class, "getUser"])->name("api.admin.getUser");
-    Route::get("users", [AdminController::class, "getUsers"])->name("api.admin.getUsers");
-    Route::delete("user", [AdminController::class, "deleteUser"])->name("api.admin.deleteUser");
-    Route::post("email", [AdminController::class, "changeEmail"])->name("api.admin.changeEmail");
-});
+    Route::group(['middleware' => [CheckAuth::class, CheckAdminRole::class], 'prefix' => 'admin'], function() {
+        Route::post("assign", [PermissionController::class, "assignAdminRole"])->name("api.admin.assignAdminRole");
+        Route::post("remove", [PermissionController::class, "removeAdminRole"])->name("api.admin.removeAdminRole");
+        Route::get("user", [AdminController::class, "getUser"])->name("api.admin.getUser");
+        Route::get("users", [AdminController::class, "getUsers"])->name("api.admin.getUsers");
+        Route::delete("user", [AdminController::class, "deleteUser"])->name("api.admin.deleteUser");
+        Route::post("email", [AdminController::class, "changeEmail"])->name("api.admin.changeEmail");
+
+        Route::get("logs", [LogController::class, "index"])->name("api.admin.logs");
+    });
 
     Route::group(['middleware' => [CheckAuth::class], 'prefix' => 'user'], function() {
         Route::put("email", [UserController::class, "changeEmail"])->name("api.user.change.email");

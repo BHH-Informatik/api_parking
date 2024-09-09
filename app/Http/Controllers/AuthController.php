@@ -6,9 +6,11 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+
     public function register(Request $request){
 
         $params = $request->validate([
@@ -37,11 +39,18 @@ class AuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            return response()->json(['message' => 'Login successful', 'user' => Auth::user()], 200);
+        if ( ! $token = auth()->attempt($request->only('email', 'password'))) {
+            return response()->json(['message' => 'The provided credentials are incorrect'], 401);
         }
 
-        return response()->json(['message' => 'The provided credentials are incorrect'], 401);
+
+        return response()->json([
+            'message' => 'Login successful',
+            "token" => $token,
+            'user' => auth()->user(),
+            'token_type' => 'bearer',
+            // 'expires_in' => auth()->factory()->getTTL() * 60
+        ], 200);
     }
 
     public function logout()
