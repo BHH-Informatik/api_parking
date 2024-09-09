@@ -104,7 +104,7 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
     });
 
 
-    Route::get('bookings/{date}', [BookingController::class, 'getParkingLots'])->name('bookings.get');
+    Route::get('parking_lots/{date}', [BookingController::class, 'getParkingLots'])->name('bookings.get');
 
 });
 
