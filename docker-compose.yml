@@ -11,6 +11,8 @@ services:
     # Setze die Datenbank Umgebungsvariablen
     env_file:
       - .env.docker
+    depends_on:
+      - db
     # Setze die Volumes für den Container.
     volumes:
       - ./database:/var/www/html/database
