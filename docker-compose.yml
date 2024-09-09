@@ -27,6 +27,13 @@ services:
       - .env.docker
     volumes:
       - ./db:/var/lib/mysql
+      - ./mariadb_healthcheck.sh:/usr/local/bin/healthcheck.sh
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   admin:
     container_name: ${APP_NAME}.admin

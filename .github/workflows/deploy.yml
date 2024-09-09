@@ -133,13 +133,23 @@ jobs:
           script: |
             cd ${{ vars.DEPLOY_FOLDER }}/src
 
-            # create database if not exists
-            touch database/database.sqlite
-            # Set correct permissions for the database file and its containing directory
-            chmod -R 777 database
-
             docker compose down
             yes | docker system prune
             docker compose build
             docker compose up -d
+
+            # Wait for the MariaDB container to be ready
+            RETRIES=30
+            until [ "$(docker ps | grep ${{ vars.APP_NAME }}.db | grep -c 'healthy')" -eq 1 ] || [ $RETRIES -eq 0 ]; do
+              echo "Waiting for DB container to be healthy..."
+              sleep 5
+              RETRIES=$((RETRIES-1))
+            done
+
+            if [ $RETRIES -eq 0 ]; then
+              echo "DB container did not become healthy in time."
+              exit 1
+            fi
+
+            # Run migrations
             docker exec ${{ vars.APP_NAME }}.00 php artisan migrate
