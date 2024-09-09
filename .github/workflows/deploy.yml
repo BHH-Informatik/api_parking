@@ -101,6 +101,10 @@ jobs:
 
           VITE_APP_NAME="${APP_NAME}"
 
+          JWT_SECRET=04rLAYXHFFxEGgfiLi5lve3pVEjqhr5T8bg5Eiheh9nDxBnDWngoOnO0t9sBXLaU
+
+          JWT_ALGO=HS256
+
           " > .env
 
       - name: copy project files to src folder
@@ -129,13 +133,26 @@ jobs:
           script: |
             cd ${{ vars.DEPLOY_FOLDER }}/src
 
-            # create database if not exists
-            touch database/database.sqlite
-            # Set correct permissions for the database file and its containing directory
-            chmod -R 777 database
-
             docker compose down
             yes | docker system prune
             docker compose build
             docker compose up -d
+
+            # Run generate scribe docs
+            docker exec ${{ vars.APP_NAME }}.00 php artisan scribe:generate
+
+            # Wait for the MariaDB container to be ready
+            RETRIES=30
+            until [ "$(docker inspect --format='{{.State.Health.Status}}' ${{ vars.APP_NAME }}.db)" == "healthy" ] || [ $RETRIES -eq 0 ]; do
+              echo "Waiting for DB container to be healthy..."
+              sleep 5
+              RETRIES=$((RETRIES-1))
+            done
+
+            if [ $RETRIES -eq 0 ]; then
+              echo "DB container did not become healthy in time."
+              exit 1
+            fi
+
+            # Run migrations
             docker exec ${{ vars.APP_NAME }}.00 php artisan migrate
