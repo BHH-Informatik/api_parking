@@ -3,6 +3,7 @@ services:
   laravel:
     # Setze den Container namen
     container_name: ${APP_NAME}.00
+    restart: unless-stopped
     # Baue den Container aus dem Dockerfile
     build:
       context: .
@@ -16,3 +17,16 @@ services:
     # Leite den container port 80 auf den gegebenen Host port um
     ports:
       - ${EXPOSED_BACKEND_PORT:-8747}:80
+  db:
+    container_name: ${APP_NAME}.db
+    restart: unless-stopped
+    image: mariadb:11.5.2
+    env_file:
+      - .env.docker
+
+  admin:
+    container_name: ${APP_NAME}.admin
+    restart: unless-stopped
+    image: adminer:4.8.1
+    ports:
+      - ${EXPOSED_ADMINER_PORT:-8748}:8080
