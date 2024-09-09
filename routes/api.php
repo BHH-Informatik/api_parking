@@ -59,7 +59,7 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
         Route::post("remove", [PermissionController::class, "removeAdminRole"])->name("api.admin.removeAdminRole");
         Route::get("user", [AdminController::class, "getUser"])->name("api.admin.getUser");
         Route::get("users", [AdminController::class, "getUsers"])->name("api.admin.getUsers");
-        Route::delete("user", [AdminController::class, "deleteUser"])->name("api.admin.deleteUser");
+        Route::delete("user/{id}", [AdminController::class, "deleteUser"])->name("api.admin.deleteUser");
         Route::post("email", [AdminController::class, "changeEmail"])->name("api.admin.changeEmail");
 
         Route::get("logs", [LogController::class, "index"])->name("api.admin.logs");

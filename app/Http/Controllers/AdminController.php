@@ -25,14 +25,10 @@ class AdminController extends Controller
         return response()->json(['message' => 'Getting users information was successful', 'users' => User::all()], 200);
     }
 
-    public function deleteUser(Request $request) {
-
-        $request -> validate([
-            'user_id' => 'required|integer',
-        ]);
+    public function deleteUser(Request $request, $id) {
 
         try {
-            User::findOrFail($request->user_id)->delete();
+            User::findOrFail($id)->delete();
             return response()->json(['message' => 'User successfully deleted'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Deletion of user failed', 'error' => $e->getMessage()], 400);

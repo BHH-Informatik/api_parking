@@ -37,7 +37,24 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'roles',
     ];
+
+    protected $appends = [
+        'role_list',
+        'avatar',
+    ];
+
+
+
+    public function getRoleListAttribute() {
+        return $this->roles->pluck('name')->toArray();
+    }
+
+    public function getAvatarAttribute() {
+        return 'https://www.gravatar.com/avatar/' . md5($this->email ?? 'blank');
+    }
+
 
     /**
      * Get the attributes that should be cast.
