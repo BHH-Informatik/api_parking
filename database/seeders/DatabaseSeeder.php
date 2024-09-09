@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\ParkingLot;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Database\Factories\ParkingLotFactory;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -24,6 +26,8 @@ class DatabaseSeeder extends Seeder
         $user->assignRole('admin');
 
         User::factory(20)->create();
+
+
 
     }
 }
