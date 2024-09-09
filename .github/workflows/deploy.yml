@@ -138,6 +138,9 @@ jobs:
             docker compose build
             docker compose up -d
 
+            # Run generate scribe docs
+            docker exec ${{ vars.APP_NAME }}.00 php artisan scribe:generate
+
             # Wait for the MariaDB container to be ready
             RETRIES=30
             until [ "$(docker inspect --format='{{.State.Health.Status}}' ${{ vars.APP_NAME }}.db)" == "healthy" ] || [ $RETRIES -eq 0 ]; do

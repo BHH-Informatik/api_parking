@@ -11,6 +11,20 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Http\Middleware\LogActions;
 
+Route::group(["prefix" => "/docs"], function() {
+    // if env debug is false return 404
+    Route::get("", function() {
+
+        if(env('APP_DEBUG', false) === false) {
+            return response()->json(['message' => 'Not Found'], 404);
+        }
+
+        // return public/docs/openapi.yml
+        return response()->file(public_path('docs/openapi.yaml'));
+    });
+});
+
+
 Route::group(['middleware' => [LogActions::class, 'api']], function(){
 
     Route::get('/', function (Request $request) {

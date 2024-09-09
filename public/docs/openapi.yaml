@@ -1,0 +1,385 @@
+openapi: 3.0.3
+info:
+  title: api_parking
+  description: ''
+  version: 1.0.0
+servers:
+  -
+    url: 'http://localhost'
+paths:
+  /api/health:
+    get:
+      summary: ''
+      operationId: getApiHealth
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  message: ok
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: ok
+      tags:
+        - Endpoints
+  /api/auth/register:
+    post:
+      summary: ''
+      operationId: postApiAuthRegister
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: jbgtgxdierdlebjwsxc
+                last_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: lkhqatdhqj
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: isporer@example.net
+                password:
+                  type: string
+                  description: 'Must be at least 8 characters.'
+                  example: "`7l?Y|'E^I"
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+  /api/auth/login:
+    post:
+      summary: ''
+      operationId: postApiAuthLogin
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address.'
+                  example: barney69@example.com
+                password:
+                  type: string
+                  description: ''
+                  example: 'xQL^lO|:Am"'
+              required:
+                - email
+                - password
+  /api/auth/logout:
+    post:
+      summary: ''
+      operationId: postApiAuthLogout
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+  /api/auth/me:
+    get:
+      summary: ''
+      operationId: getApiAuthMe
+      description: ''
+      parameters: []
+      responses:
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthorized
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+      tags:
+        - Endpoints
+  /api/auth/deleteMe:
+    get:
+      summary: ''
+      operationId: getApiAuthDeleteMe
+      description: ''
+      parameters: []
+      responses:
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthorized
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+      tags:
+        - Endpoints
+  /api/admin/user:
+    post:
+      summary: ''
+      operationId: postApiAdminUser
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: ptsndccluburmsrob
+                last_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: ixilbkrhjp
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: valentin.erdman@example.com
+                password:
+                  type: string
+                  description: 'Must be at least 8 characters.'
+                  example: 5)yZ/cu
+                role:
+                  type: string
+                  description: ''
+                  example: natus
+              required:
+                - first_name
+                - last_name
+                - email
+                - password
+    get:
+      summary: ''
+      operationId: getApiAdminUser
+      description: ''
+      parameters: []
+      responses:
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthorized
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+      tags:
+        - Endpoints
+  '/api/admin/user/{id}':
+    get:
+      summary: ''
+      operationId: getApiAdminUserId
+      description: ''
+      parameters: []
+      responses:
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthorized
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+      tags:
+        - Endpoints
+    put:
+      summary: ''
+      operationId: putApiAdminUserId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: tehroemurtb
+                last_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: od
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: ekulas@example.org
+    delete:
+      summary: ''
+      operationId: deleteApiAdminUserId
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+    parameters:
+      -
+        in: path
+        name: id
+        description: 'The ID of the user.'
+        example: voluptates
+        required: true
+        schema:
+          type: string
+  /api/admin/logs:
+    get:
+      summary: ''
+      operationId: getApiAdminLogs
+      description: ''
+      parameters: []
+      responses:
+        403:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: Unauthorized
+                properties:
+                  message:
+                    type: string
+                    example: Unauthorized
+      tags:
+        - Endpoints
+  /api/user/email:
+    put:
+      summary: ''
+      operationId: putApiUserEmail
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: 'Must be a valid email address. Must not be greater than 255 characters.'
+                  example: claudine.heathcote@example.com
+              required:
+                - email
+  /api/user/name:
+    put:
+      summary: ''
+      operationId: putApiUserName
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: utwzw
+                last_name:
+                  type: string
+                  description: 'Must not be greater than 255 characters.'
+                  example: rgpsfagoiqhzxhamewzc
+              required:
+                - first_name
+                - last_name
+  /api/user/password:
+    put:
+      summary: ''
+      operationId: putApiUserPassword
+      description: ''
+      parameters: []
+      responses: {  }
+      tags:
+        - Endpoints
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  type: string
+                  description: ''
+                  example: repellendus
+                new_password:
+                  type: string
+                  description: 'Must be at least 8 characters.'
+                  example: upbgxfldppvbzgayoeszpzbb
+              required:
+                - old_password
+                - new_password
+tags:
+  -
+    name: Endpoints
+    description: ''
+components:
+  securitySchemes:
+    default:
+      type: http
+      scheme: bearer
+      description: 'You can retrieve your token by visiting your dashboard and clicking <b>Generate API token</b>.'
+security:
+  -
+    default: []
