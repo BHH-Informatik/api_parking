@@ -1,0 +1,18 @@
+services:
+  # Container fürs Backend
+  laravel:
+    # Setze den Container namen
+    container_name: ${APP_NAME}.00
+    # Baue den Container aus dem Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Setze die Datenbank Umgebungsvariablen
+    env_file:
+      - .env.docker
+    # Setze die Volumes für den Container.
+    volumes:
+      - ./database:/var/www/html/database
+    # Leite den container port 80 auf den gegebenen Host port um
+    ports:
+      - ${EXPOSED_BACKEND_PORT:-8747}:80

@@ -13,15 +13,3 @@ Route::get('/', function (Request $request) {
         'ip' => $request->header()['x-forwarded-for'] ?? 'unknown',
     ], 200);
 })->name('api.index');
-
-
-Route::post("/dev", function (Request $request) {
-    // $params = $request->validate([
-    //     'name' => 'required|string',
-    // ]);
-
-    return response()->json([
-        'success' => true,
-        'message' => 'Hello ',
-    ], 200);
-});
