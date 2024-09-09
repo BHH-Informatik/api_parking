@@ -25,6 +25,8 @@ services:
     image: mariadb:11.5.2
     env_file:
       - .env.docker
+    volumes:
+      - ./db:/var/lib/mysql
 
   admin:
     container_name: ${APP_NAME}.admin
