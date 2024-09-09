@@ -138,4 +138,4 @@ jobs:
             yes | docker system prune
             docker compose build
             docker compose up -d
-            docker compose -f docker-compose.yml exec laravel php artisan migrate
+            docker exec ${{ vars.APP_NAME }}.00 php artisan migrate
