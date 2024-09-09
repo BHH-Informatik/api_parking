@@ -56,13 +56,13 @@ Route::group(['middleware' => [CheckAuth::class, CheckAdminRole::class], 'prefix
     Route::get("user", [AdminController::class, "getUser"])->name("api.admin.getUser");
     Route::get("users", [AdminController::class, "getUsers"])->name("api.admin.getUsers");
     Route::delete("user", [AdminController::class, "deleteUser"])->name("api.admin.deleteUser");
-    Route::put("email", [AdminController::class, "changeEmail"])->name("api.admin.changeEmail");
+    Route::post("email", [AdminController::class, "changeEmail"])->name("api.admin.changeEmail");
 });
 
 Route::group(['middleware' => [CheckAuth::class], 'prefix' => 'user'], function() {
-    Route::put("email", [UserController::class, "changeEmail"])->name("api.user.change.email");
-    Route::put("name", [UserController::class, "changeName"])->name("api.user.change.name");
-    Route::put("password", [UserController::class, "changePassword"])->name("api.user.change.password");
+    Route::post("email", [UserController::class, "changeEmail"])->name("api.user.change.email");
+    Route::post("name", [UserController::class, "changeName"])->name("api.user.change.name");
+    Route::post("password", [UserController::class, "changePassword"])->name("api.user.change.password");
     Route::delete("", [UserController::class, "deleteUser"])->name("api.user.delete");
 });
 
