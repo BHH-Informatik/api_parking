@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LogController;
@@ -72,6 +73,8 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
         Route::delete("", [UserController::class, "deleteUser"])->name("api.user.delete");
     });
 
+
+    Route::get('bookings/{date}', [BookingController::class, 'getParkingLots'])->name('bookings.get');
 
 });
 
