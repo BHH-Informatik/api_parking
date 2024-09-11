@@ -42,7 +42,7 @@ endpoints:
     auth:
       - headers
       - Authorization
-      - 'Bearer abdEZgk4fc366avDP185eVh'
+      - 'Bearer dEaaPe6b148ZVk3c5gDvfh6'
     controller: null
     method: null
     route: null
@@ -85,7 +85,7 @@ endpoints:
     auth:
       - headers
       - Authorization
-      - 'Bearer hEakgvfadb8VcZ5346DP6e1'
+      - 'Bearer PE8Vc4dkD5ebhaga16vZf36'
     controller: null
     method: null
     route: null
@@ -116,20 +116,20 @@ endpoints:
         name: email
         description: 'Must be a valid email address. Must not be greater than 255 characters.'
         required: true
-        example: constance66@example.net
+        example: simeon.brekke@example.org
         type: string
         enumValues: []
         exampleWasSpecified: false
         custom: []
     cleanBodyParameters:
-      email: constance66@example.net
+      email: simeon.brekke@example.org
     fileParameters: []
     responses: []
     responseFields: []
     auth:
       - headers
       - Authorization
-      - 'Bearer d6vcPaZeEg3akf1bV568h4D'
+      - 'Bearer aa8dv6Z4b3cegkPD516VEfh'
     controller: null
     method: null
     route: null
@@ -160,7 +160,7 @@ endpoints:
         name: first_name
         description: 'Must not be greater than 255 characters.'
         required: true
-        example: swejgdntfafujfeqlq
+        example: pzabevxxyoplthyfzhxp
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -169,21 +169,21 @@ endpoints:
         name: last_name
         description: 'Must not be greater than 255 characters.'
         required: true
-        example: obdqvzqiowz
+        example: qyyuqx
         type: string
         enumValues: []
         exampleWasSpecified: false
         custom: []
     cleanBodyParameters:
-      first_name: swejgdntfafujfeqlq
-      last_name: obdqvzqiowz
+      first_name: pzabevxxyoplthyfzhxp
+      last_name: qyyuqx
     fileParameters: []
     responses: []
     responseFields: []
     auth:
       - headers
       - Authorization
-      - 'Bearer hf6ZkP836ceDga4vVab1E5d'
+      - 'Bearer D3h8vkaEPaeb46Z1cV5gd6f'
     controller: null
     method: null
     route: null
@@ -214,7 +214,7 @@ endpoints:
         name: old_password
         description: ''
         required: true
-        example: numquam
+        example: quisquam
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -223,21 +223,74 @@ endpoints:
         name: new_password
         description: 'Must be at least 8 characters.'
         required: true
-        example: sqgrsjowwnhdepmipngqko
+        example: idlvbfewsaplqwtqtdtxjnorm
         type: string
         enumValues: []
         exampleWasSpecified: false
         custom: []
     cleanBodyParameters:
-      old_password: numquam
-      new_password: sqgrsjowwnhdepmipngqko
+      old_password: quisquam
+      new_password: idlvbfewsaplqwtqtdtxjnorm
     fileParameters: []
     responses: []
     responseFields: []
     auth:
       - headers
       - Authorization
-      - 'Bearer 664ahek3d5cfZbDga1PVv8E'
+      - 'Bearer abV1486DgfPhd65eaE3vcZk'
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: 'api/parking_lots/{date}'
+    metadata:
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: true
+      custom: []
+    headers:
+      Authorization: 'Bearer {YOUR_AUTH_KEY}'
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters:
+      date:
+        name: date
+        description: ''
+        required: true
+        example: ut
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        custom: []
+    cleanUrlParameters:
+      date: ut
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 400
+        content: '{"message":"Invalid date format. Expected format: YYYY-MM-DD"}'
+        headers:
+          cache-control: 'no-cache, private'
+          content-type: application/json
+          access-control-allow-origin: '*'
+        description: null
+        custom: []
+    responseFields: []
+    auth:
+      - headers
+      - Authorization
+      - 'Bearer 8e53gcaEPafhv6DdkV1b64Z'
     controller: null
     method: null
     route: null

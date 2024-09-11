@@ -147,6 +147,8 @@ class AuthController extends Controller
      * @group Authentication
      * Request Reset Token
      *
+     * @return \Illuminate\Http\JsonResponse
+     *
      * @unauthenticated
      *
      * @bodyParam email string required User-Email. Example: john.doe@example.com
@@ -194,6 +196,8 @@ class AuthController extends Controller
      *
      * @group Authentication
      * Reset Password
+     *
+     * @return \Illuminate\Http\JsonResponse
      *
      * @unauthenticated
      *

@@ -41,7 +41,7 @@ jobs:
           APP_KEY=base64:NfrLKrgkNcDdJ3QNK281MnR63egocfl0lMcGDit9m9I=
           APP_DEBUG=false
           APP_TIMEZONE=UTC
-          APP_URL=${{ vars.APP_URL }}
+          APP_URL=\"${{ vars.APP_URL }}\"
 
           APP_LOCALE=en
           APP_FALLBACK_LOCALE=en
@@ -87,11 +87,11 @@ jobs:
           MAIL_MAILER=smtp
           MAIL_HOST="${{ vars.MAIL_HOST }}"
           MAIL_PORT="${{ vars.MAIL_PORT }}"
-          MAIL_USERNAME="${{ secrets.MAIL_USERNAME }}"
+          MAIL_USERNAME=\"${{ secrets.MAIL_USERNAME }}\"
           MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
           MAIL_ENCRYPTION=null
-          MAIL_FROM_ADDRESS="${{ vars.MAIL_ADDRESS }}"
-          MAIL_FROM_NAME="${{ vars.MAIL_NAME }}"
+          MAIL_FROM_ADDRESS=\"${{ vars.MAIL_ADDRESS }}\"
+          MAIL_FROM_NAME=\"${{ vars.MAIL_NAME }}\"
 
           AWS_ACCESS_KEY_ID=
           AWS_SECRET_ACCESS_KEY=
@@ -105,9 +105,9 @@ jobs:
 
           JWT_ALGO=HS256
 
-          MAIL_TO_ADDRESS="${{ vars.MAIL_TO_ADDRESS }}"
+          MAIL_TO_ADDRESS=\"${{ vars.MAIL_TO_ADDRESS }}\"
 
-          PASSWORD_RESET_URL="${{ vars.PASSWORD_RESET_URL }}"
+          PASSWORD_RESET_URL=\"${{ vars.PASSWORD_RESET_URL }}\"
 
           " > .env
 
@@ -160,4 +160,4 @@ jobs:
             docker exec ${{ vars.APP_NAME }}.00 php artisan migrate
 
             # Run generate scribe docs
-            docker exec ${{ vars.APP_NAME }}.00 php artisan scribe:generate
+            docker exec ${{ vars.APP_NAME }}.00  php artisan scribe:generate

@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "Parking Docs",
-        "_postman_id": "a9a9ea0e-ca6a-4728-95c3-12ce592dffee",
+        "_postman_id": "4eeb0e5f-6999-46b2-8307-798446627146",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -202,6 +202,88 @@
                             "name": "Sucess"
                         }
                     ]
+                },
+                {
+                    "name": "Request Reset Token",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/request",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/request"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"john.doe@example.com\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"success\": true, \"message\": \"Reset Mail Sent\"}",
+                            "name": "Success"
+                        }
+                    ]
+                },
+                {
+                    "name": "Reset Password",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/auth\/reset",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/auth\/reset"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"email\":\"john.doe@example.com\",\"token\":\"12345678\",\"password\":\"12345678\",\"password_confirmation\":\"12345678\"}"
+                        },
+                        "description": "",
+                        "auth": {
+                            "type": "noauth"
+                        }
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{\"success\": true, \"message\": \"Password Reset\"}",
+                            "name": "Success"
+                        },
+                        {
+                            "header": [],
+                            "code": 400,
+                            "body": "{\"success\": false, \"message\": \"Invalid Token\"}",
+                            "name": "Invalid Token"
+                        }
+                    ]
                 }
             ]
         },
@@ -325,7 +407,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"email\":\"constance66@example.net\"}"
+                            "raw": "{\"email\":\"simeon.brekke@example.org\"}"
                         },
                         "description": ""
                     },
@@ -353,7 +435,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"first_name\":\"swejgdntfafujfeqlq\",\"last_name\":\"obdqvzqiowz\"}"
+                            "raw": "{\"first_name\":\"pzabevxxyoplthyfzhxp\",\"last_name\":\"qyyuqx\"}"
                         },
                         "description": ""
                     },
@@ -381,11 +463,64 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\"old_password\":\"numquam\",\"new_password\":\"sqgrsjowwnhdepmipngqko\"}"
+                            "raw": "{\"old_password\":\"quisquam\",\"new_password\":\"idlvbfewsaplqwtqtdtxjnorm\"}"
                         },
                         "description": ""
                     },
                     "response": []
+                },
+                {
+                    "name": "GET api\/parking_lots\/{date}",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/parking_lots\/:date",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/parking_lots\/:date",
+                            "variable": [
+                                {
+                                    "id": "date",
+                                    "key": "date",
+                                    "value": "ut",
+                                    "description": ""
+                                }
+                            ]
+                        },
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": null,
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [
+                                {
+                                    "key": "cache-control",
+                                    "value": "no-cache, private"
+                                },
+                                {
+                                    "key": "content-type",
+                                    "value": "application\/json"
+                                },
+                                {
+                                    "key": "access-control-allow-origin",
+                                    "value": "*"
+                                }
+                            ],
+                            "code": 400,
+                            "body": "{\"message\":\"Invalid date format. Expected format: YYYY-MM-DD\"}",
+                            "name": ""
+                        }
+                    ]
                 }
             ]
         },
@@ -435,6 +570,47 @@
                             "code": 200,
                             "body": "{\"message\":\"Getting log information was successful\",\"log\":[{\"id\":1,\"user_id\":1,\"action\":\"User created\",\"created_at\":\"2021-09-29T14:00:00.000000Z\",\"updated_at\":\"2021-09-29T14:00:00.000000Z\"}]}",
                             "name": "Success"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Messages",
+            "description": "",
+            "item": [
+                {
+                    "name": "Send a message to the admins",
+                    "request": {
+                        "url": {
+                            "host": "{{baseUrl}}",
+                            "path": "api\/message\/send",
+                            "query": [],
+                            "raw": "{{baseUrl}}\/api\/message\/send"
+                        },
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application\/json"
+                            },
+                            {
+                                "key": "Accept",
+                                "value": "application\/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\"message\":\"This is a message\",\"subject\":\"BUG | Request\"}"
+                        },
+                        "description": ""
+                    },
+                    "response": [
+                        {
+                            "header": [],
+                            "code": 200,
+                            "body": "{ \"success\": true, \"message\": \"Message Sent\" }",
+                            "name": ""
                         }
                     ]
                 }
