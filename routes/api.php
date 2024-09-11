@@ -72,6 +72,8 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
         Route::get("me", [AuthController::class, "me"])->name("api.auth.me")->middleware(CheckAuth::class);
         Route::get("deleteMe", [AuthController::class, "deleteMe"])->name("api.auth.deleteme")->middleware(CheckAuth::class);
 
+        Route::get("calendar", [AuthController::class, "getCalendar"])->name("api.auth.calendar")->middleware(CheckAuth::class);
+
         Route::post("request", [AuthController::class, "requestReset"])->name("api.auth.requestReset");
         Route::post("reset", [AuthController::class, "doReset"])->name("api.auth.doReset");
     });
@@ -106,5 +108,7 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
 
     Route::get('parking_lots/{date}', [BookingController::class, 'getParkingLots'])->name('bookings.get');
 
+
+    Route::get("calendar/{token}/calendar.ical", [BookingController::class, "getICAL"])->name("bookings.ical");
 });
 

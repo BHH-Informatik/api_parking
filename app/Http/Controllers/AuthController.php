@@ -242,6 +242,22 @@ class AuthController extends Controller
         return response()->json([ 'success' => true ,'message' => 'Password Reset' ], 200);
     }
 
+    public function getCalendar() {
+
+        $user = auth()->user();
+        if(!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if(!$user->calendar_token) {
+            $user->calendar_token = $this->generateRandomString(50);
+            $user->save();
+        }
+
+        return response()->json(['token' => $user->calendar_token, 'link' => 'calendar/' . $user->calendar_token . '/calendar.ical'], 200);
+
+    }
+
     protected function respondWithToken($token, $user = null){
 
         if($user == null){
