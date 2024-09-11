@@ -264,7 +264,7 @@ class AuthController extends Controller
             $user->save();
         }
 
-        return response()->json(['token' => $user->calendar_token, 'link' => '/api/calendar/' . $user->calendar_token . '/calendar.ical'], 200);
+        return response()->json(['token' => $user->calendar_token, 'link' => env("APP_URL") . '/api/calendar/' . $user->calendar_token . '/calendar.ical'], 200);
 
     }
 
