@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Spatie\IcalendarGenerator\Components\Calendar;
 use Spatie\IcalendarGenerator\Components\Event;
 
+// @group Booking
+// API endpoints for booking
 class BookingController extends Controller
 {
 
@@ -62,6 +64,14 @@ class BookingController extends Controller
     }
 
 
+    /**
+     * @group Booking
+     * Get iCal Calendar
+     *
+     * @urlParam token required The calendar token of the user. Example: 9hC4K....gMzp8nQCrgw
+     *
+     * @response 200 scenario="Success" ICal-File
+     */
     public function getICAL($token) {
 
         $user = User::where('calendar_token', $token)->first();

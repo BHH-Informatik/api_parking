@@ -242,6 +242,16 @@ class AuthController extends Controller
         return response()->json([ 'success' => true ,'message' => 'Password Reset' ], 200);
     }
 
+    /**
+     * @group Authentication
+     * Get Calendar Token
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @authenticated
+     *
+     * @response 200 scenario="Success" {"token": "9hC4K....gMzp8nQCrgw", "link": "calendar/9hC4K....gMzp8nQCrgw/calendar.ical"}
+     */
     public function getCalendar() {
 
         $user = auth()->user();
