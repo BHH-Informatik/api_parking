@@ -18,6 +18,8 @@ class Booking extends Model
         'user_id',
         'parking_lot_id',
         'booking_date',
+        'booking_start_time',
+        'booking_end_time'
     ];
 
 

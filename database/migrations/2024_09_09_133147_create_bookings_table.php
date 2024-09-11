@@ -16,6 +16,8 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('parking_lot_id')->constrained()->onDelete('cascade');
             $table->date('booking_date');
+            $table->time('booking_start_time')->nullable();
+            $table->time('booking_end_time')->nullable();
             $table->timestamps();
         });
     }
