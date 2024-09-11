@@ -2,4 +2,4 @@ Neue Nachrichtenanfrage von {{ $from->first_name }} {{ $from->last_name }} ({{ $
 <br>
 Betreff: {{ $subject }}<br>
 <br>
-Nachricht: {{ $message }}
+Nachricht: {{ $msg }}

@@ -140,7 +140,7 @@ jobs:
             docker compose down
             yes | docker system prune
             docker compose build
-            docker compose up -d
+            docker compose up -d --remove-orphans
 
             # Wait for the MariaDB container to be ready
             RETRIES=30
