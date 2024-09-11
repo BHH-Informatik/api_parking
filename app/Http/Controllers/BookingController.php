@@ -68,6 +68,8 @@ class BookingController extends Controller
      * @group Booking
      * Get iCal Calendar
      *
+     * @description Zuerst muss ein Kalendertoken über /auth/calendar generiert werden.
+     *
      * @urlParam token required The calendar token of the user. Example: 9hC4K....gMzp8nQCrgw
      *
      * @response 200 scenario="Success" ICal-File
