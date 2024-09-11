@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+// DB
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\ResetMail;
+use App\Mail\HasBeenResetMail;
 
 // @group Authentication
 // API endpoints for authentication
@@ -138,6 +143,101 @@ class AuthController extends Controller
         return response()->json(['message' => 'User successfully deleted'], 200);
     }
 
+    /**
+     * @group Authentication
+     * Request Reset Token
+     *
+     * @unauthenticated
+     *
+     * @bodyParam email string required User-Email. Example: john.doe@example.com
+     *
+     * @response 200 scenario="Success" {"success": true, "message": "Reset Mail Sent"}
+     */
+    public function requestReset(Request $request) {
+        $params = $request->validate([
+            'email' => 'required|string|email',
+        ]);
+
+        $user = User::where('email', $params['email'])->first();
+        if(!$user) {
+
+            if(env('APP_ENV') == true) {
+                return response()->json([ 'success' => false ,'message' => 'Unknown Email' ], 200);
+            }
+
+            return response()->json([ 'success' => true ,'message' => 'Reset Mail Sent' ], 200);
+        }
+
+
+        $reset_token = $this->generateRandomString(32);
+
+        if(DB::table('password_reset_tokens')->where('email', $user->email)->first()) {
+            DB::table('password_reset_tokens')->where('email', $user->email)->delete();
+        }
+
+        DB::table('password_reset_tokens')->insert([
+            'email' => $user->email,
+            'token' => $reset_token,
+        ]);
+
+        Mail::to($user->email)
+            ->send(new ResetMail([
+                'user' => $user,
+                'token' => $reset_token,
+            ]));
+
+        return response()->json([ 'success' => true ,'message' => 'Reset Mail Sent' ], 200);
+
+    }
+
+    /**
+     *
+     * @group Authentication
+     * Reset Password
+     *
+     * @unauthenticated
+     *
+     * @bodyParam email string required User-Email. Example: john.doe@example.com
+     * @bodyParam token string required Token. Example: 12345678
+     * @bodyParam password string required User-Password. Example: 12345678
+     * @bodyParam password_confirmation string required User-Password-Confirmation. Example: 12345678
+     *
+     * @response 200 scenario="Success" {"success": true, "message": "Password Reset"}
+     * @response 400 scenario="Invalid Token" {"success": false, "message": "Invalid Token"}
+     */
+    public function doReset(Request $request) {
+        $params = $request->validate([
+            'email' => 'required|string|email',
+            'token' => 'required|string',
+            'password' => 'required|string|confirmed|min:8',
+        ]);
+
+        $token = DB::table('password_reset_tokens')
+            ->where('email', $params['email'])
+            ->where('token', $params['token'])
+            ->first();
+
+        if(!$token) {
+            return response()->json([ 'success' => false ,'message' => 'Invalid Token' ], 400);
+        }
+
+        $user = User::where('email', $params['email'])->first();
+        $user->password = Hash::make($params['password']);
+        $user->save();
+
+        DB::table('password_reset_tokens')
+            ->where('email', $params['email'])
+            ->where('token', $params['token'])
+            ->delete();
+
+
+        Mail::to($user->email)
+            ->send(new HasBeenResetMail([
+                'user' => $user,
+            ]));
+        return response()->json([ 'success' => true ,'message' => 'Password Reset' ], 200);
+    }
+
     protected function respondWithToken($token, $user = null){
 
         if($user == null){
@@ -153,5 +253,17 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
         ]);
+    }
+
+    function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
+        }
+
+        return $randomString;
     }
 }
