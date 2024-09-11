@@ -6,6 +6,7 @@ use App\Http\Controllers\BookingController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LogController;
+use App\Http\Controllers\MessageController;
 use App\Http\Middleware\CheckAdminRole;
 use App\Http\Middleware\CheckAuth;
 use Illuminate\Support\Facades\Route;
@@ -70,15 +71,12 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
 
         Route::get("me", [AuthController::class, "me"])->name("api.auth.me")->middleware(CheckAuth::class);
         Route::get("deleteMe", [AuthController::class, "deleteMe"])->name("api.auth.deleteme")->middleware(CheckAuth::class);
+
+        Route::post("request", [AuthController::class, "requestReset"])->name("api.auth.requestReset");
+        Route::post("reset", [AuthController::class, "doReset"])->name("api.auth.doReset");
     });
 
     Route::group(['middleware' => [CheckAuth::class, CheckAdminRole::class], 'prefix' => 'admin'], function() {
-        // Route::post("assign", [PermissionController::class, "assignAdminRole"])->name("api.admin.assignAdminRole");
-        // Route::post("remove", [PermissionController::class, "removeAdminRole"])->name("api.admin.removeAdminRole");
-        // Route::get("user", [AdminController::class, "getUser"])->name("api.admin.getUser");
-        // Route::get("users", [AdminController::class, "getUsers"])->name("api.admin.getUsers");
-        // Route::delete("user/{id}", [AdminController::class, "deleteUser"])->name("api.admin.deleteUser");
-        // Route::post("email", [AdminController::class, "changeEmail"])->name("api.admin.changeEmail");
 
         Route::group(['prefix' => "user"], function() {
             Route::post("", [AdminController::class, "createUser"])->name("api.admin.user.create");
@@ -91,8 +89,6 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
             Route::post("{id}/remove", [AdminController::class, "removeAdminRole"])->name("api.admin.user.removeAdminRole");
         });
 
-
-
         Route::get("logs", [LogController::class, "index"])->name("api.admin.logs");
     });
 
@@ -101,6 +97,10 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
         Route::put("name", [UserController::class, "changeName"])->name("api.user.change.name");
         Route::put("password", [UserController::class, "changePassword"])->name("api.user.change.password");
         // Route::delete("", [UserController::class, "deleteUser"])->name("api.user.delete");
+    });
+
+    Route::group(['middleware' => [CheckAuth::class], 'prefix' => 'message'], function() {
+        Route::post("send", [MessageController::class, "messageRequest"])->name("api.message.send");
     });
 
 

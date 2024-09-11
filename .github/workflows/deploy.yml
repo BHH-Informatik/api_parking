@@ -39,9 +39,9 @@ jobs:
           APP_VERSION=${{ github.run_number }}
           APP_ENV=local
           APP_KEY=base64:NfrLKrgkNcDdJ3QNK281MnR63egocfl0lMcGDit9m9I=
-          APP_DEBUG=true
+          APP_DEBUG=false
           APP_TIMEZONE=UTC
-          APP_URL=http://localhost
+          APP_URL=\"${{ vars.APP_URL }}\"
 
           APP_LOCALE=en
           APP_FALLBACK_LOCALE=en
@@ -84,14 +84,14 @@ jobs:
           REDIS_PASSWORD=null
           REDIS_PORT=6379
 
-          MAIL_MAILER=log
-          MAIL_HOST=127.0.0.1
-          MAIL_PORT=2525
-          MAIL_USERNAME=null
-          MAIL_PASSWORD=null
+          MAIL_MAILER=smtp
+          MAIL_HOST="${{ vars.MAIL_HOST }}"
+          MAIL_PORT="${{ vars.MAIL_PORT }}"
+          MAIL_USERNAME=\"${{ secrets.MAIL_USERNAME }}\"
+          MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
           MAIL_ENCRYPTION=null
-          MAIL_FROM_ADDRESS="hello@example.com"
-          MAIL_FROM_NAME="${APP_NAME}"
+          MAIL_FROM_ADDRESS=\"${{ vars.MAIL_ADDRESS }}\"
+          MAIL_FROM_NAME=\"${{ vars.MAIL_NAME }}\"
 
           AWS_ACCESS_KEY_ID=
           AWS_SECRET_ACCESS_KEY=
@@ -104,6 +104,10 @@ jobs:
           JWT_SECRET=04rLAYXHFFxEGgfiLi5lve3pVEjqhr5T8bg5Eiheh9nDxBnDWngoOnO0t9sBXLaU
 
           JWT_ALGO=HS256
+
+          MAIL_TO_ADDRESS=\"${{ vars.MAIL_TO_ADDRESS }}\"
+
+          PASSWORD_RESET_URL=\"${{ vars.PASSWORD_RESET_URL }}\"
 
           " > .env
 
@@ -136,10 +140,7 @@ jobs:
             docker compose down
             yes | docker system prune
             docker compose build
-            docker compose up -d
-
-            # Run generate scribe docs
-            docker exec ${{ vars.APP_NAME }}.00 php artisan scribe:generate
+            docker compose up -d --remove-orphans
 
             # Wait for the MariaDB container to be ready
             RETRIES=30
@@ -151,8 +152,12 @@ jobs:
 
             if [ $RETRIES -eq 0 ]; then
               echo "DB container did not become healthy in time."
+              docker exec ${{ vars.APP_NAME }}.00 php artisan app:report-error "DB container did not become healthy in time."
               exit 1
             fi
 
             # Run migrations
             docker exec ${{ vars.APP_NAME }}.00 php artisan migrate
+
+            # Run generate scribe docs
+            docker exec ${{ vars.APP_NAME }}.00  php artisan scribe:generate

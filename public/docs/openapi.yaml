@@ -283,6 +283,115 @@ paths:
                 example: "{'message' => 'User successfully deleted'}"
       tags:
         - Authentication
+  /api/auth/request:
+    post:
+      summary: 'Request Reset Token'
+      operationId: requestResetToken
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  message: 'Reset Mail Sent'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Reset Mail Sent'
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User-Email.
+                  example: john.doe@example.com
+              required:
+                - email
+      security: []
+  /api/auth/reset:
+    post:
+      summary: 'Reset Password'
+      operationId: resetPassword
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  message: 'Password Reset'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Password Reset'
+        400:
+          description: 'Invalid Token'
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: false
+                  message: 'Invalid Token'
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Invalid Token'
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  description: User-Email.
+                  example: john.doe@example.com
+                token:
+                  type: string
+                  description: Token.
+                  example: '12345678'
+                password:
+                  type: string
+                  description: User-Password.
+                  example: '12345678'
+                password_confirmation:
+                  type: string
+                  description: User-Password-Confirmation.
+                  example: '12345678'
+              required:
+                - email
+                - token
+                - password
+                - password_confirmation
+      security: []
   /api/docs:
     get:
       summary: ''
@@ -343,7 +452,7 @@ paths:
                 email:
                   type: string
                   description: 'Must be a valid email address. Must not be greater than 255 characters.'
-                  example: constance66@example.net
+                  example: simeon.brekke@example.org
               required:
                 - email
   /api/user/name:
@@ -365,11 +474,11 @@ paths:
                 first_name:
                   type: string
                   description: 'Must not be greater than 255 characters.'
-                  example: swejgdntfafujfeqlq
+                  example: pzabevxxyoplthyfzhxp
                 last_name:
                   type: string
                   description: 'Must not be greater than 255 characters.'
-                  example: obdqvzqiowz
+                  example: qyyuqx
               required:
                 - first_name
                 - last_name
@@ -392,14 +501,44 @@ paths:
                 old_password:
                   type: string
                   description: ''
-                  example: numquam
+                  example: quisquam
                 new_password:
                   type: string
                   description: 'Must be at least 8 characters.'
-                  example: sqgrsjowwnhdepmipngqko
+                  example: idlvbfewsaplqwtqtdtxjnorm
               required:
                 - old_password
                 - new_password
+  '/api/parking_lots/{date}':
+    get:
+      summary: ''
+      operationId: getApiParking_lotsDate
+      description: ''
+      parameters: []
+      responses:
+        400:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  message: 'Invalid date format. Expected format: YYYY-MM-DD'
+                properties:
+                  message:
+                    type: string
+                    example: 'Invalid date format. Expected format: YYYY-MM-DD'
+      tags:
+        - Endpoints
+    parameters:
+      -
+        in: path
+        name: date
+        description: ''
+        example: ut
+        required: true
+        schema:
+          type: string
   /api/admin/logs:
     get:
       summary: 'Get Logs'
@@ -475,6 +614,49 @@ paths:
                           example: '2021-09-29T14:00:00.000000Z'
       tags:
         - Log
+  /api/message/send:
+    post:
+      summary: 'Send a message to the admins'
+      operationId: sendAMessageToTheAdmins
+      description: ''
+      parameters: []
+      responses:
+        200:
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  success: true
+                  message: 'Message Sent'
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Message Sent'
+      tags:
+        - Messages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                  description: 'The message to send.'
+                  example: 'This is a message'
+                subject:
+                  type: string
+                  description: 'The subject of the message.'
+                  example: 'BUG | Request'
+              required:
+                - message
+                - subject
   /api/admin/user:
     post:
       summary: 'Create User'
@@ -731,6 +913,9 @@ tags:
     description: ''
   -
     name: Log
+    description: ''
+  -
+    name: Messages
     description: ''
   -
     name: 'User Management'
