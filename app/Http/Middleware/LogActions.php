@@ -19,7 +19,7 @@ class LogActions
         try{
             $user = auth()->user();
             $useragent = $request->userAgent();
-            $ip = $request->ip();
+            $ip = $request->header()['x-forwarded-for'] ?? 'unknown';
             // get name of the route
             $action = $request->route()->getName();
 
