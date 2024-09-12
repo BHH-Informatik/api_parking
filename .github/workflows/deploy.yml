@@ -8,8 +8,8 @@ on:
       - development
 
 jobs:
-  environment: Production
   build:
+    environment: Production
     runs-on: ubuntu-latest
 
     steps:
