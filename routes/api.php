@@ -92,21 +92,27 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
         });
 
         Route::get("logs", [LogController::class, "index"])->name("api.admin.logs");
+
+        Route::get("bookings", [BookingController::class, "getBookings"])->name("api.admin.bookings");
     });
 
     Route::group(['middleware' => [CheckAuth::class], 'prefix' => 'user'], function() {
         Route::put("email", [UserController::class, "changeEmail"])->name("api.user.change.email");
         Route::put("name", [UserController::class, "changeName"])->name("api.user.change.name");
         Route::put("password", [UserController::class, "changePassword"])->name("api.user.change.password");
+        Route::get("bookings", [BookingController::class, "getOwnBookings"])->name("api.user.bookings");
     });
 
     Route::group(['middleware' => [CheckAuth::class], 'prefix' => 'message'], function() {
         Route::post("send", [MessageController::class, "messageRequest"])->name("api.message.send");
     });
 
+    Route::group(['middleware' => [CheckAuth::class], 'prefix' => 'booking'], function() {
+        Route::post("reserve", [BookingController::class, "bookParkingLot"])->name("api.bookings.reserve");
+        Route::delete("{id}", [BookingController::class, "cancelBooking"])->name("api.bookings.cancel");
+    });
 
     Route::get('parking_lots/{date}', [BookingController::class, 'getParkingLots'])->name('bookings.get');
-
 
     Route::get("calendar/{token}/calendar.ical", [BookingController::class, "getICAL"])->name("bookings.ical");
 });

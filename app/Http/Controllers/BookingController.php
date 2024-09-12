@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\ParkingLot;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -25,10 +26,11 @@ class BookingController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      *
+     * @unauthenticated
      *
      * @response 200 scenario="Success" {
      *   "message": "Getting parking lot information was successful",
-     *   "date": "2023-10-01",
+     *   "date": "2023-09-27",
      *   "parking_lots": [
      *     {
      *       "id": 1,
@@ -106,6 +108,214 @@ class BookingController extends Controller
 
         return response()->json(['message' => 'Getting parking lot information was successful', 'date' => $validDate, 'parking_lots' => $parkingLotData], 200);
     }
+
+    /**
+     * @group Booking
+     * Get all bookings information
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @authenticated
+     *
+     * @response 200 scenario="Success" {
+     *   "message": "Getting booking information was successful",
+     *   "bookings": [
+     *     {
+     *       "id": 1,
+     *       "user_id": 2,
+     *       "parking_lot_id": 3,
+     *       "booking_date": "2023-09-27",
+     *       "booking_start_time": "10:00",
+     *       "booking_end_time": "12:00"
+     *     },
+     *     {
+     *       "id": 2,
+     *       "user_id": 3,
+     *       "parking_lot_id": 1,
+     *       "booking_date": "2023-09-28",
+     *       "booking_start_time": "14:00",
+     *       "booking_end_time": "16:00"
+     *     }
+     *   ]
+     * }
+     *
+     * @response 500 scenario="Internal Server Error" {
+     *   "message": "Getting booking information failed",
+     *   "error": "The error message here"
+     * }
+     */
+    public function getBookings() {
+        $bookings = Booking::all();
+        return response()->json(['message' => 'Getting booking information was successful', 'bookings' => $bookings], 200);
+    }
+
+    /**
+     * @group Booking
+     * Get own bookings information
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @authenticated
+     *
+     * @response 200 scenario="Success" {
+     *   "message": "Getting booking information was successful",
+     *   "bookings": [
+     *     {
+     *       "id": 1,
+     *       "user_id": 2,
+     *       "parking_lot_id": 3,
+     *       "booking_date": "2023-09-27",
+     *       "booking_start_time": "10:00",
+     *       "booking_end_time": "12:00"
+     *     },
+     *     {
+     *       "id": 2,
+     *       "user_id": 2,
+     *       "parking_lot_id": 1,
+     *       "booking_date": "2023-09-28",
+     *       "booking_start_time": null,
+     *       "booking_end_time": null
+     *     }
+     *   ]
+     * }
+     *
+     * @response 404 scenario="No Bookings Found" {
+     *   "message": "No bookings found for this user"
+     * }
+     *
+     * @response 500 scenario="Internal Server Error" {
+     *   "message": "Getting booking information failed",
+     *   "error": "The error message here"
+     * }
+     */
+    public function getOwnBookings() {
+        $userId = Auth::user()->id;
+        $bookings = Booking::where('user_id', $userId)->get();
+        return response()->json(['message' => 'Getting booking information was successful', 'bookings' => $bookings], 200);
+    }
+
+    /**
+     * @group Booking
+     * Book a parking lot
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @authenticated
+     *
+     * @bodyParam parking_lot_id int required The ID of the parking lot to be booked. Example: 1
+     * @bodyParam booking_date string required The date for the booking. Expected format: YYYY-MM-DD. Example: 2023-09-27
+     * @bodyParam start_time string optional The start time for the booking. Example: 10:00
+     * @bodyParam end_time string optional The end time for the booking. Example: 12:00
+     *
+     * @response 201 scenario="Success" {
+     *   "message": "Parking lot booked successfully",
+     *   "booking": {
+     *     "id": 1,
+     *     "user_id": 2,
+     *     "parking_lot_id": 1,
+     *     "booking_date": "2023-09-27",
+     *     "booking_start_time": "10:00",
+     *     "booking_end_time": "12:00"
+     *   }
+     * }
+     *
+     * @response 400 scenario="User Already Has Booking" {
+     *   "message": "The user already has a reservation for a parking lot on this day"
+     * }
+     *
+     * @response 400 scenario="Parking Lot Already Booked" {
+     *   "message": "The parking lot is already booked for this day"
+     * }
+     *
+     * @response 422 scenario="Validation Error" {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "parking_lot_id": [
+     *       "The selected parking lot id is invalid."
+     *     ],
+     *     "booking_date": [
+     *       "The booking date is required.",
+     *       "The booking date must be a valid date."
+     *     ]
+     *   }
+     * }
+     */
+    public function bookParkingLot(Request $request) {
+
+        $request->validate([
+            'parking_lot_id' => 'required|exists:parking_lots,id',
+            'booking_date' => 'required|date_format:Y-m-d',
+            'start_time' => 'nullable|string',
+            'end_time' => 'nullable|string|after:start_time'
+        ]);
+
+        $userId = Auth::user()->id;
+
+        $existingBookingFromUser = Booking::where('user_id', $userId)->where('booking_date', $request->booking_date)->first();
+
+        if ($existingBookingFromUser != null) {
+            return response()->json(['message' => 'The user already has a reservation for a parking lot on this day'], 400);
+        }
+
+        $existingBooking = Booking::where('parking_lot_id', $request->parking_lot_id)->where('booking_date', $request->booking_date)->first();
+
+        if ($existingBooking != null) {
+            return response()->json(['message' => 'The parking lot is already booked for this day'], 400);
+        }
+
+        $booking = Booking::create([
+            'user_id' => $userId,
+            'parking_lot_id' => $request->parking_lot_id,
+            'booking_date' => $request->booking_date,
+            'booking_start_time' => $request->start_time,
+            'booking_end_time' => $request->end_time
+        ]);
+
+        return response()->json(['message' => 'Parking lot booked successfully', 'booking' => $booking], 201);
+    }
+
+    /**
+     * @group Booking
+     * Cancel a booking
+     *
+     * @param int $id required The ID of the booking to be canceled. Example: 1
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @authenticated
+     *
+     * @response 200 scenario="Success" {
+     *   "message": "Booking successfully deleted"
+     * }
+     *
+     * @response 403 scenario="Unauthorized" {
+     *   "message": "You are not authorized to delete this booking"
+     * }
+     *
+     * @response 404 scenario="Booking Not Found" {
+     *   "message": "No booking found for the given ID"
+     * }
+     *
+     * @response 400 scenario="Deletion Failed" {
+     *   "message": "Deletion of booking failed",
+     *   "error": "The error message here"
+     * }
+     */
+    public function cancelBooking($id) {
+        try {
+            $booking = Booking::findOrFail($id);
+            $user = Auth::user();
+            if ($user->hasRole('admin') || $user->id == $booking->user_id) {
+                $booking->delete();
+                return response()->json(['message' => 'Booking successfully deleted'], 200);
+            }
+            return response()->json(['message' => 'You are not authorized to delete this booking'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Deletion of booking failed', 'error' => $e->getMessage()], 400);
+        }
+    }
+
+
 
 
     /**
