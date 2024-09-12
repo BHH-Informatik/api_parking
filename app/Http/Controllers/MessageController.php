@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\MessageRequest;
+use App\Mail\MessageRequestReceived;
 
 
 // @group Messages
@@ -38,6 +39,10 @@ class MessageController extends Controller {
                 'subject' => $params['subject'],
                 'msg' => $params['message'],
             ]));
+
+        Mail::to($user->email)->send(new MessageRequestReceived([
+            'user' => $user,
+        ]));
 
         return response()->json([ 'success' => true ,'message' => 'Message Sent' ], 200);
     }
