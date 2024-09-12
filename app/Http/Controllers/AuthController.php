@@ -281,7 +281,7 @@ class AuthController extends Controller
             'user' => $user,
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => null
+            'expires_in' => auth()->factory()->getTTL() * 999999999
         ]);
     }
 

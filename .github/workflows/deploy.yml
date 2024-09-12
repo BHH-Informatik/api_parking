@@ -106,8 +106,6 @@ jobs:
 
           JWT_ALGO=HS256
 
-          JWT_TTL=null
-
           MAIL_TO_ADDRESS=\"${{ vars.MAIL_TO_ADDRESS }}\"
 
           PASSWORD_RESET_URL=\"${{ vars.PASSWORD_RESET_URL }}\"
