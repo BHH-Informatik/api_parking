@@ -17,6 +17,50 @@ use Spatie\IcalendarGenerator\Components\Event;
 class BookingController extends Controller
 {
 
+    /**
+     * @group Booking
+     * Get parking lot booking information
+     *
+     * @param date string required The date for which to retrieve parking lot information. Expected format: YYYY-MM-DD
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     *
+     * @response 200 scenario="Success" {
+     *   "message": "Getting parking lot information was successful",
+     *   "date": "2023-10-01",
+     *   "parking_lots": [
+     *     {
+     *       "id": 1,
+     *       "name": "P1",
+     *       "status": "FREE",
+     *       "extras": {}
+     *     },
+     *     {
+     *       "id": 2,
+     *       "name": "P2",
+     *       "status": "TIMERANGE_BLOCKED",
+     *       "extras": {
+     *         "start_time": "10:00",
+     *         "end_time": "12:00",
+     *         "blocked_by_user": true
+     *       }
+     * {
+     *        "id": 3,
+     *        "name": "P3",
+     *        "status": "FULL_DAY_BLOCKED",
+     *        "extras": {
+     *          "blocked_by_user": false
+     *        }
+     *     }
+     *   ]
+     * }
+     *
+     * @response 400 scenario="Invalid Date Format" {
+     *   "message": "Invalid date format. Expected format: YYYY-MM-DD",
+     *   "error": "The error message here"
+     * }
+     */
     public function getParkingLots($date) {
         try {
             $validDate = Carbon::createFromFormat('Y-m-d', $date)->format('Y-m-d');

@@ -98,7 +98,6 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
         Route::put("email", [UserController::class, "changeEmail"])->name("api.user.change.email");
         Route::put("name", [UserController::class, "changeName"])->name("api.user.change.name");
         Route::put("password", [UserController::class, "changePassword"])->name("api.user.change.password");
-        // Route::delete("", [UserController::class, "deleteUser"])->name("api.user.delete");
     });
 
     Route::group(['middleware' => [CheckAuth::class], 'prefix' => 'message'], function() {
