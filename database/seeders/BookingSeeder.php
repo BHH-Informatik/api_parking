@@ -21,12 +21,9 @@ class BookingSeeder extends Seeder
         // Clear Booking table
         Booking::truncate();
 
-
-        $adminUser = User::where('email', 'friedrich@enten.dev')->first();
-
-        // 10 times
-        for($i = 0; $i < 10; $i++) {
-
+        // 50 times
+        for($i = 0; $i < 50; $i++) {
+            $randomUser = User::inRandomOrder()->first();
             // random day between today and 30 days from now
             $randomDay = Carbon::today()->addDays(rand(0, 30));
 
@@ -35,7 +32,7 @@ class BookingSeeder extends Seeder
             // 50% chance
             if(rand(0, 1) == 1) {
                 Booking::create([
-                    'user_id' => $adminUser->id,
+                    'user_id' => $randomUser->id,
                     'parking_lot_id' => $randomParkinglot->id,
                     'booking_date' => $randomDay,
                 ]);
@@ -44,7 +41,7 @@ class BookingSeeder extends Seeder
                 $randomDateTime = Carbon::parse($randomDay)->addHours(rand(0, 23));
 
                 Booking::create([
-                    'user_id' => $adminUser->id,
+                    'user_id' => $randomUser->id,
                     'parking_lot_id' => $randomParkinglot->id,
                     'booking_date' => $randomDay,
                     'booking_start_time' => $randomDateTime,
