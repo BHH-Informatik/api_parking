@@ -108,7 +108,7 @@ class AuthController extends Controller
         $token = JWTAuth::getToken();
         if ($token) {
             JWTAuth::setToken($token)->invalidate();
-          }
+        }
         JWTAuth::unsetToken();
         auth()->logout();
 
