@@ -105,7 +105,12 @@ class AuthController extends Controller
      * @response 200 scenario="Sucess" {'message' => 'Logout successful'}
      */
     public function logout() {
-        Auth::logout();
+        $token = JWTAuth::getToken();
+        if ($token) {
+            JWTAuth::setToken($token)->invalidate();
+          }
+        JWTAuth::unsetToken();
+        auth()->logout();
 
         return response()->json(['message' => 'Logout successful'], 200);
     }
