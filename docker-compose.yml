@@ -14,9 +14,9 @@ services:
     depends_on:
       - db
     # Setze die Volumes für den Container.
-    volumes:
-      - .:/var/www/html
-      - /var/www/html/db
+    # volumes:
+    #   - .:/var/www/html
+    #   - /var/www/html/db
     # Leite den container port 80 auf den gegebenen Host port um
     ports:
       - ${EXPOSED_BACKEND_PORT:-8747}:80
