@@ -85,7 +85,7 @@ class AdminController extends Controller {
      * @response 400 scenario="Bad Request" {"message":"Getting users information failed","error":"..."}
      *
      * */
-    public function getUsers() {
+    public function getUsers(Request $request) {
 
         $limit = $request->input('limit', 50);
         $offset = $request->input('offset', 0);
