@@ -43,6 +43,7 @@ class BookingController extends Controller
      *       "name": "P2",
      *       "status": "TIMERANGE_BLOCKED",
      *       "extras": {
+     *         "booking_id": 24
      *         "start_time": "10:00",
      *         "end_time": "12:00",
      *         "blocked_by_user": true
@@ -52,6 +53,7 @@ class BookingController extends Controller
      *        "name": "P3",
      *        "status": "FULL_DAY_BLOCKED",
      *        "extras": {
+     *          "booking_id": 23
      *          "blocked_by_user": false
      *        }
      *     }
@@ -86,6 +88,7 @@ class BookingController extends Controller
                 if ($booking->booking_start_time) {
                     $status = 'TIMERANGE_BLOCKED';
                     $extras = (object) [
+                        'booking_id' => $booking->id,
                         'start_time' => $booking->booking_start_time,
                         'end_time' => $booking->booking_end_time,
                         'blocked_by_user' => ($userId == $booking->user_id)
@@ -93,6 +96,7 @@ class BookingController extends Controller
                 } else {
                     $status = 'FULL_DAY_BLOCKED';
                     $extras = (object) [
+                        'booking_id' => $booking->id,
                         'blocked_by_user' => ($userId == $booking->user_id)
                     ];
                 }
