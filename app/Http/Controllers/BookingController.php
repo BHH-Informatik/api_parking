@@ -366,27 +366,37 @@ class BookingController extends Controller
      * }
      */
     public function bookFreeParkingLot(Request $request) {
-        $request->validate([
-            'booking_date' => 'required|date_format:Y-m-d',
-            'start_time' => 'nullable_if_both_null|date_format:H:i',
-            'end_time' => 'nullable_if_both_null|date_format:H:i|after:start_time'
-        ]);
+        try {
+            $request->validate([
+                'booking_date' => 'required|date_format:Y-m-d',
+                'start_time' => 'nullable_if_both_null|date_format:H:i',
+                'end_time' => 'nullable_if_both_null|date_format:H:i|after:start_time'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Validate ist Schuld', 'error' => $e->getMessage()], 400);
+        }
+
 
         $startTime = $request->start_time;
         $endTime = $request->end_time;
 
         if ($startTime !== null) {
-            $bookedParkingLots = Booking::where('booking_date', $request->booking_date)
-                ->where(function ($query) use ($startTime, $endTime) {
-                    $query->where(function ($query) use ($startTime, $endTime) {
-                        $query->whereBetween('start_time', [$startTime, $endTime])
-                            ->orWhereBetween('end_time', [$startTime, $endTime])
-                            ->orWhere(function ($query) use ($startTime, $endTime) {
-                                $query->where('start_time', '<', $startTime)
-                                    ->where('end_time', '>', $endTime);
-                            });
-                    })->orWhereNull('start_time');
-                })->pluck('parking_lot_id');
+            try {
+                $bookedParkingLots = Booking::where('booking_date', $request->booking_date)
+                    ->where(function ($query) use ($startTime, $endTime) {
+                        $query->where(function ($query) use ($startTime, $endTime) {
+                            $query->whereBetween('start_time', [$startTime, $endTime])
+                                ->orWhereBetween('end_time', [$startTime, $endTime])
+                                ->orWhere(function ($query) use ($startTime, $endTime) {
+                                    $query->where('start_time', '<', $startTime)
+                                        ->where('end_time', '>', $endTime);
+                                });
+                        })->orWhereNull('start_time');
+                    })->pluck('parking_lot_id');
+            } catch (\Exception $e) {
+                return response()->json(['message' => 'Query ist Schuld', 'error' => $e->getMessage()], 400);
+            }
+
         } else {
             $bookedParkingLots = Booking::where('booking_date', $request->booking_date)->pluck('parking_lot_id');
         }
