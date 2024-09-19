@@ -79,7 +79,8 @@ class BookingController extends Controller
      *   "error": "The error message here"
      * }
      */
-    public function getParkingLots($date) {
+    public function getParkingLots($date)
+    {
         try {
             $validDate = Carbon::createFromFormat('Y-m-d', $date)->format('Y-m-d');
         } catch (\Exception $e) {
@@ -101,7 +102,7 @@ class BookingController extends Controller
             if ($booking) {
                 if ($booking->booking_start_time) {
                     $status = 'TIMERANGE_BLOCKED';
-                    $extras = (object) [
+                    $extras = (object)[
                         'booking_id' => $booking->id,
                         'start_time' => $booking->booking_start_time,
                         'end_time' => $booking->booking_end_time,
@@ -109,7 +110,7 @@ class BookingController extends Controller
                     ];
                 } else {
                     $status = 'FULL_DAY_BLOCKED';
-                    $extras = (object) [
+                    $extras = (object)[
                         'booking_id' => $booking->id,
                         'blocked_by_user' => ($userId == $booking->user_id)
                     ];
@@ -162,7 +163,8 @@ class BookingController extends Controller
      *   "error": "The error message here"
      * }
      */
-    public function getBookings() {
+    public function getBookings()
+    {
         $bookings = Booking::all();
         return response()->json(['message' => 'Getting booking information was successful', 'bookings' => $bookings], 200);
     }
@@ -206,7 +208,8 @@ class BookingController extends Controller
      *   "error": "The error message here"
      * }
      */
-    public function getOwnBookings() {
+    public function getOwnBookings()
+    {
         $userId = Auth::user()->id;
         $bookings = Booking::where('user_id', $userId)->get();
         return response()->json(['message' => 'Getting booking information was successful', 'bookings' => $bookings], 200);
@@ -258,7 +261,8 @@ class BookingController extends Controller
      *   }
      * }
      */
-    public function bookParkingLot(Request $request) {
+    public function bookParkingLot(Request $request)
+    {
 
         $request->validate([
             'parking_lot_id' => 'required|exists:parking_lots,id',
@@ -365,38 +369,31 @@ class BookingController extends Controller
      *   }
      * }
      */
-    public function bookFreeParkingLot(Request $request) {
-        try {
-            $request->validate([
-                'booking_date' => 'required|date_format:Y-m-d',
-                'start_time' => 'nullable_if_both_null|date_format:H:i',
-                'end_time' => 'nullable_if_both_null|date_format:H:i|after:start_time'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Validate ist Schuld', 'error' => $e->getMessage()], 400);
-        }
+    public function bookFreeParkingLot(Request $request)
+    {
+
+        $request->validate([
+            'booking_date' => 'required|date_format:Y-m-d',
+            'start_time' => 'nullable_if_both_null|date_format:H:i',
+            'end_time' => 'nullable_if_both_null|date_format:H:i|after:start_time'
+        ]);
 
 
         $startTime = $request->start_time;
         $endTime = $request->end_time;
 
         if ($startTime !== null) {
-            try {
-                $bookedParkingLots = Booking::where('booking_date', $request->booking_date)
-                    ->where(function ($query) use ($startTime, $endTime) {
-                        $query->where(function ($query) use ($startTime, $endTime) {
-                            $query->whereBetween('start_time', [$startTime, $endTime])
-                                ->orWhereBetween('end_time', [$startTime, $endTime])
-                                ->orWhere(function ($query) use ($startTime, $endTime) {
-                                    $query->where('start_time', '<', $startTime)
-                                        ->where('end_time', '>', $endTime);
-                                });
-                        })->orWhereNull('start_time');
-                    })->pluck('parking_lot_id');
-            } catch (\Exception $e) {
-                return response()->json(['message' => 'Query ist Schuld', 'error' => $e->getMessage()], 400);
-            }
-
+            $bookedParkingLots = Booking::where('booking_date', $request->booking_date)
+                ->where(function ($query) use ($startTime, $endTime) {
+                    $query->where(function ($query) use ($startTime, $endTime) {
+                        $query->whereBetween('booking_start_time', [$startTime, $endTime])
+                            ->orWhereBetween('booking_end_time', [$startTime, $endTime])
+                            ->orWhere(function ($query) use ($startTime, $endTime) {
+                                $query->where('booking_start_time', '<', $startTime)
+                                    ->where('booking_end_time', '>', $endTime);
+                            });
+                    })->orWhereNull('booking_start_time');
+                })->pluck('parking_lot_id');
         } else {
             $bookedParkingLots = Booking::where('booking_date', $request->booking_date)->pluck('parking_lot_id');
         }
@@ -453,7 +450,8 @@ class BookingController extends Controller
      *   "error": "The error message here"
      * }
      */
-    public function cancelBooking($id) {
+    public function cancelBooking($id)
+    {
         try {
             $booking = Booking::findOrFail($id);
             $user = Auth::user();
@@ -468,8 +466,6 @@ class BookingController extends Controller
     }
 
 
-
-
     /**
      * @group Booking
      * Get iCal Calendar
@@ -480,10 +476,11 @@ class BookingController extends Controller
      *
      * @response 200 scenario="Success" ICal-File
      */
-    public function getICAL($token) {
+    public function getICAL($token)
+    {
 
         $user = User::where('calendar_token', $token)->first();
-        if(!$user) {
+        if (!$user) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -492,16 +489,16 @@ class BookingController extends Controller
         $bookings = Booking::where('user_id', $user->id)->get();
 
         // return response()->json($bookings);
-        foreach($bookings as $booking) {
+        foreach ($bookings as $booking) {
             $parkingLot = ParkingLot::find($booking->parking_lot_id);
 
-            if($booking->booking_start_time) {
+            if ($booking->booking_start_time) {
                 $event = Event::create()
                     ->name('Parkplatz ' . $parkingLot->lot_name)
                     ->description('Parkplatz ' . $parkingLot->lot_name . ' gebucht')
                     ->startsAt(Carbon::parse($booking->booking_date)->setTimeFromTimeString($booking->booking_start_time))
                     ->endsAt(Carbon::parse($booking->booking_date)->setTimeFromTimeString($booking->booking_end_time));
-            }else{
+            } else {
                 $event = Event::create()
                     ->name('Parkplatz ' . $parkingLot->lot_name)
                     ->description('Parkplatz ' . $parkingLot->lot_name . ' gebucht')
