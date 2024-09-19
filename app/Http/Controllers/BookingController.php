@@ -375,17 +375,21 @@ class BookingController extends Controller
         $startTime = $request->start_time;
         $endTime = $request->end_time;
 
-        $bookedParkingLots = Booking::where('booking_date', $request->booking_date)
-            ->where(function ($query) use ($startTime, $endTime) {
-                $query->where(function ($query) use ($startTime, $endTime) {
-                    $query->whereBetween('start_time', [$startTime, $endTime])
-                        ->orWhereBetween('end_time', [$startTime, $endTime])
-                        ->orWhere(function ($query) use ($startTime, $endTime) {
-                            $query->where('start_time', '<', $startTime)
-                                ->where('end_time', '>', $endTime);
-                        });
-                })->orWhereNull('start_time');
-            })->pluck('parking_lot_id');
+        if ($startTime !== null) {
+            $bookedParkingLots = Booking::where('booking_date', $request->booking_date)
+                ->where(function ($query) use ($startTime, $endTime) {
+                    $query->where(function ($query) use ($startTime, $endTime) {
+                        $query->whereBetween('start_time', [$startTime, $endTime])
+                            ->orWhereBetween('end_time', [$startTime, $endTime])
+                            ->orWhere(function ($query) use ($startTime, $endTime) {
+                                $query->where('start_time', '<', $startTime)
+                                    ->where('end_time', '>', $endTime);
+                            });
+                    })->orWhereNull('start_time');
+                })->pluck('parking_lot_id');
+        } else {
+            $bookedParkingLots = Booking::where('booking_date', $request->booking_date)->pluck('parking_lot_id');
+        }
 
         $availableParkingLot = ParkingLot::whereNotIn('id', $bookedParkingLots)->first();
 
