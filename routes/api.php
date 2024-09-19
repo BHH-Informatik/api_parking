@@ -101,6 +101,7 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
         Route::put("name", [UserController::class, "changeName"])->name("api.user.change.name");
         Route::put("password", [UserController::class, "changePassword"])->name("api.user.change.password");
         Route::get("bookings", [BookingController::class, "getOwnBookings"])->name("api.user.bookings");
+
     });
 
     Route::group(['middleware' => [CheckAuth::class], 'prefix' => 'message'], function() {
@@ -109,6 +110,7 @@ Route::group(['middleware' => [LogActions::class, 'api']], function(){
 
     Route::group(['middleware' => [CheckAuth::class], 'prefix' => 'booking'], function() {
         Route::post("reserve", [BookingController::class, "bookParkingLot"])->name("api.bookings.reserve");
+        Route::post("autobook", [BookingController::class, "bookFreeParkingLot"])->name("api.bookings.reserve");
         Route::delete("{id}", [BookingController::class, "cancelBooking"])->name("api.bookings.cancel");
     });
 

@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 
+use Illuminate\Support\Facades\Validator;
 use Spatie\IcalendarGenerator\Components\Calendar;
 use Spatie\IcalendarGenerator\Components\Event;
 
@@ -17,6 +18,19 @@ use Spatie\IcalendarGenerator\Components\Event;
 // API endpoints for booking
 class BookingController extends Controller
 {
+    public function __construct()
+    {
+        Validator::extend('nullable_if_both_null', function ($attribute, $value, $parameters, $validator) {
+            $startTime = $validator->getData()['start_time'] ?? null;
+            $endTime = $validator->getData()['end_time'] ?? null;
+
+            if (is_null($startTime) && is_null($endTime)) {
+                return true;
+            }
+
+            return !is_null($value);
+        });
+    }
 
     /**
      * @group Booking
@@ -208,8 +222,8 @@ class BookingController extends Controller
      *
      * @bodyParam parking_lot_id int required The ID of the parking lot to be booked. Example: 1
      * @bodyParam booking_date string required The date for the booking. Expected format: YYYY-MM-DD. Example: 2023-09-27
-     * @bodyParam start_time string optional The start time for the booking. Example: 10:00
-     * @bodyParam end_time string optional The end time for the booking. Example: 12:00
+     * @bodyParam start_time string optional The start time for the booking.Expected format: HH:MM. Example: 10:00
+     * @bodyParam end_time string optional The end time for the booking.Expected format: HH:MM. Example: 12:00
      *
      * @response 201 scenario="Success" {
      *   "message": "Parking lot booked successfully",
@@ -228,7 +242,7 @@ class BookingController extends Controller
      * }
      *
      * @response 400 scenario="Parking Lot Already Booked" {
-     *   "message": "The parking lot is already booked for this day"
+     *   "message": "The parking lot is already booked for this time"
      * }
      *
      * @response 422 scenario="Validation Error" {
@@ -249,27 +263,148 @@ class BookingController extends Controller
         $request->validate([
             'parking_lot_id' => 'required|exists:parking_lots,id',
             'booking_date' => 'required|date_format:Y-m-d',
-            'start_time' => 'nullable|string',
-            'end_time' => 'nullable|string|after:start_time'
+            'start_time' => 'nullable_if_both_null|date_format:H:i',
+            'end_time' => 'nullable_if_both_null|date_format:H:i|after:start_time'
         ]);
 
         $userId = Auth::user()->id;
 
         $existingBookingFromUser = Booking::where('user_id', $userId)->where('booking_date', $request->booking_date)->first();
 
-        if ($existingBookingFromUser != null) {
+        if ($existingBookingFromUser !== null) {
             return response()->json(['message' => 'The user already has a reservation for a parking lot on this day'], 400);
         }
 
-        $existingBooking = Booking::where('parking_lot_id', $request->parking_lot_id)->where('booking_date', $request->booking_date)->first();
+        $startTime = $request->start_time;
+        $endTime = $request->end_time;
 
-        if ($existingBooking != null) {
-            return response()->json(['message' => 'The parking lot is already booked for this day'], 400);
+        if ($startTime === null) {
+            $isBooked = Booking::where('parking_lot_id', $request->parking_lot_id)->where('booking_date', $request->booking_date)->exists();
+        } else {
+            $isBooked = Booking::where('booking_date', $request->booking_date)
+                ->where('parking_lot_id', $request->parking_lot_id)
+                ->where(function ($query) use ($startTime, $endTime) {
+                    $query->where(function ($query) use ($startTime, $endTime) {
+                        $query->whereBetween('start_time', [$startTime, $endTime])
+                            ->orWhereBetween('end_time', [$startTime, $endTime])
+                            ->orWhere(function ($query) use ($startTime, $endTime) {
+                                $query->where('start_time', '<', $startTime)
+                                    ->where('end_time', '>', $endTime);
+                            });
+                    })->orWhereNull('start_time');
+                })
+                ->exists();
+        }
+
+        if ($isBooked) {
+            return response()->json(['message' => 'The parking lot is already booked for this time'], 400);
         }
 
         $booking = Booking::create([
             'user_id' => $userId,
             'parking_lot_id' => $request->parking_lot_id,
+            'booking_date' => $request->booking_date,
+            'booking_start_time' => $request->start_time,
+            'booking_end_time' => $request->end_time
+        ]);
+
+        return response()->json(['message' => 'Parking lot booked successfully', 'booking' => $booking], 201);
+    }
+
+    /**
+     * @group Booking
+     * Book a free parking lot
+     *
+     * This endpoint allows users to book a parking lot without selecting a parking lot for a specific date and time.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     *
+     * @authenticated
+     *
+     * @bodyParam parking_lot_id int required The ID of the parking lot to be booked. Example: 1
+     * @bodyParam booking_date string required The date for the booking. Expected format: YYYY-MM-DD. Example: 2023-09-27
+     * @bodyParam start_time string optional The start time for the booking. Expected format: HH:MM. Example: 10:00
+     * @bodyParam end_time string optional The end time for the booking. Expected format: HH:MM. Example: 12:00
+     *
+     * @response 201 scenario="Success" {
+     *   "message": "Parking lot booked successfully",
+     *   "booking": {
+     *     "id": 1,
+     *     "user_id": 2,
+     *     "parking_lot_id": 1,
+     *     "booking_date": "2023-09-27",
+     *     "booking_start_time": "10:00",
+     *     "booking_end_time": "12:00"
+     *   }
+     * }
+     *
+     * @response 400 scenario="User Already Has Booking" {
+     *   "message": "The user already has a reservation for a parking lot on this day"
+     * }
+     *
+     * @response 400 scenario="Parking Lot Already Booked" {
+     *   "message": "There are no available parking lots for this time."
+     * }
+     *
+     * @response 422 scenario="Validation Error" {
+     *   "message": "The given data was invalid.",
+     *   "errors": {
+     *     "parking_lot_id": [
+     *       "The selected parking lot id is invalid."
+     *     ],
+     *     "booking_date": [
+     *       "The booking date is required.",
+     *       "The booking date must be a valid date."
+     *     ],
+     *     "start_time": [
+     *       "The start time must be a valid time."
+     *     ],
+     *     "end_time": [
+     *       "The end time must be a valid time.",
+     *       "The end time must be after the start time."
+     *     ]
+     *   }
+     * }
+     */
+    public function bookFreeParkingLot(Request $request) {
+        $request->validate([
+            'booking_date' => 'required|date_format:Y-m-d',
+            'start_time' => 'nullable_if_both_null|date_format:H:i',
+            'end_time' => 'nullable_if_both_null|date_format:H:i|after:start_time'
+        ]);
+
+        $startTime = $request->start_time;
+        $endTime = $request->end_time;
+
+        $bookedParkingLots = Booking::where('booking_date', $request->booking_date)
+            ->where(function ($query) use ($startTime, $endTime) {
+                $query->where(function ($query) use ($startTime, $endTime) {
+                    $query->whereBetween('start_time', [$startTime, $endTime])
+                        ->orWhereBetween('end_time', [$startTime, $endTime])
+                        ->orWhere(function ($query) use ($startTime, $endTime) {
+                            $query->where('start_time', '<', $startTime)
+                                ->where('end_time', '>', $endTime);
+                        });
+                })->orWhereNull('start_time');
+            })->pluck('parking_lot_id');
+
+        $availableParkingLot = ParkingLot::whereNotIn('id', $bookedParkingLots)->first();
+
+        if ($availableParkingLot === null) {
+            return response()->json(['message' => 'There are no available parking lots for this time.'], 400);
+        }
+
+        $userId = Auth::user()->id;
+
+        $existingBookingFromUser = Booking::where('user_id', $userId)->where('booking_date', $request->booking_date)->first();
+
+        if ($existingBookingFromUser !== null) {
+            return response()->json(['message' => 'The user already has a reservation for a parking lot on this day'], 400);
+        }
+
+        $booking = Booking::create([
+            'user_id' => $userId,
+            'parking_lot_id' => $availableParkingLot,
             'booking_date' => $request->booking_date,
             'booking_start_time' => $request->start_time,
             'booking_end_time' => $request->end_time
