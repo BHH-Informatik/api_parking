@@ -403,7 +403,7 @@ class BookingController extends Controller
 
         $booking = Booking::create([
             'user_id' => $userId,
-            'parking_lot_id' => $availableParkingLot,
+            'parking_lot_id' => $availableParkingLot->id,
             'booking_date' => $request->booking_date,
             'booking_start_time' => $request->start_time,
             'booking_end_time' => $request->end_time
