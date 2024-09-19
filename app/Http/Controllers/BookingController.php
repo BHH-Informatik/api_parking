@@ -321,7 +321,6 @@ class BookingController extends Controller
      *
      * @authenticated
      *
-     * @bodyParam parking_lot_id int required The ID of the parking lot to be booked. Example: 1
      * @bodyParam booking_date string required The date for the booking. Expected format: YYYY-MM-DD. Example: 2023-09-27
      * @bodyParam start_time string optional The start time for the booking. Expected format: HH:MM. Example: 10:00
      * @bodyParam end_time string optional The end time for the booking. Expected format: HH:MM. Example: 12:00
