@@ -34,7 +34,7 @@ class BookingController extends Controller
 
     /**
      * @group Booking
-     * Get parking lot booking information
+     * Get parking lot booking information (not all bookings are shown only the information if the parking lot is booked)
      *
      * @param date string required The date for which to retrieve parking lot information. Expected format: YYYY-MM-DD
      *
@@ -97,24 +97,35 @@ class BookingController extends Controller
             $extras = new \stdClass();
             $status = 'FREE';
 
-            $booking = $bookedLots->firstWhere('parking_lot_id', $lot->id);
+            $bookings = $bookedLots->where('parking_lot_id', $lot->id);
 
-            if ($booking) {
-                if ($booking->booking_start_time) {
-                    $status = 'TIMERANGE_BLOCKED';
-                    $extras = (object)[
-                        'booking_id' => $booking->id,
-                        'start_time' => $booking->booking_start_time,
-                        'end_time' => $booking->booking_end_time,
-                        'blocked_by_user' => ($userId == $booking->user_id)
-                    ];
-                } else {
-                    $status = 'FULL_DAY_BLOCKED';
-                    $extras = (object)[
-                        'booking_id' => $booking->id,
-                        'blocked_by_user' => ($userId == $booking->user_id)
-                    ];
+            if ($bookings !== null) {
+                foreach ($bookings as $booking) {
+                    if ($booking->booking_start_time) {
+                        $status = 'TIMERANGE_BLOCKED';
+                        $extras = (object)[
+                            'booking_id' => $booking->id,
+                            'start_time' => $booking->booking_start_time,
+                            'end_time' => $booking->booking_end_time,
+                            'blocked_by_user' => ($userId == $booking->user_id)
+                        ];
+                        if ($userId == $booking->user_id) {
+                            return [
+                                'id' => $lot->id,
+                                'name' => $lot->lot_name,
+                                'status' => $status,
+                                'extras' => $extras
+                            ];
+                        }
+                    } else {
+                        $status = 'FULL_DAY_BLOCKED';
+                        $extras = (object)[
+                            'booking_id' => $booking->id,
+                            'blocked_by_user' => ($userId == $booking->user_id)
+                        ];
+                    }
                 }
+
             }
 
             return [
@@ -296,8 +307,7 @@ class BookingController extends Controller
                                     ->where('booking_end_time', '>', $endTime);
                             });
                     })->orWhereNull('booking_start_time');
-                })
-                ->exists();
+                })->exists();
         }
 
         if ($isBooked) {
@@ -371,13 +381,11 @@ class BookingController extends Controller
      */
     public function bookFreeParkingLot(Request $request)
     {
-
         $request->validate([
             'booking_date' => 'required|date_format:Y-m-d',
             'start_time' => 'nullable_if_both_null|date_format:H:i',
             'end_time' => 'nullable_if_both_null|date_format:H:i|after:start_time'
         ]);
-
 
         $startTime = $request->start_time;
         $endTime = $request->end_time;
