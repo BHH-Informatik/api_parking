@@ -102,7 +102,7 @@ jobs:
 
           VITE_APP_NAME="${APP_NAME}"
 
-          JWT_SECRET=04rLAYXHFFxEGgfiLi5lve3pVEjqhr5T8bg5Eiheh9nDxBnDWngoOnO0t9sBXLaU
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
 
           JWT_ALGO=HS256
 
