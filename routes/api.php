@@ -27,7 +27,7 @@ Route::group(["prefix" => "/docs"], function() {
 });
 
 
-Route::group(['middleware' => [LogActions::class, 'api']], function(){
+Route::group(['middleware' => [/** LogActions::class, */ 'api']], function(){
 
     Route::get('/', function (Request $request) {
 
