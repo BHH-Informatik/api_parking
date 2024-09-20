@@ -289,13 +289,13 @@ class BookingController extends Controller
                 ->where('parking_lot_id', $request->parking_lot_id)
                 ->where(function ($query) use ($startTime, $endTime) {
                     $query->where(function ($query) use ($startTime, $endTime) {
-                        $query->whereBetween('start_time', [$startTime, $endTime])
-                            ->orWhereBetween('end_time', [$startTime, $endTime])
+                        $query->whereBetween('booking_start_time', [$startTime, $endTime])
+                            ->orWhereBetween('booking_end_time', [$startTime, $endTime])
                             ->orWhere(function ($query) use ($startTime, $endTime) {
-                                $query->where('start_time', '<', $startTime)
-                                    ->where('end_time', '>', $endTime);
+                                $query->where('booking_start_time', '<', $startTime)
+                                    ->where('booking_end_time', '>', $endTime);
                             });
-                    })->orWhereNull('start_time');
+                    })->orWhereNull('booking_start_time');
                 })
                 ->exists();
         }
@@ -398,7 +398,7 @@ class BookingController extends Controller
             $bookedParkingLots = Booking::where('booking_date', $request->booking_date)->pluck('parking_lot_id');
         }
 
-        $availableParkingLot = ParkingLot::whereNotIn('id', $bookedParkingLots)->first();
+        $availableParkingLot = ParkingLot::whereNotIn('id', $bookedParkingLots)->inRandomOrder()->first();
 
         if ($availableParkingLot === null) {
             return response()->json(['message' => 'There are no available parking lots for this time.'], 400);
