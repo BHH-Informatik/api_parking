@@ -14,5 +14,5 @@ can do whatever you want with this stuff. If we meet some day, and you think
 this stuff is worth it, you can buy us a beer in return Matteo Sandoval, Friedrich Völker
 
 ## Contributors
-[@msandova27] - Matteo Sandoval   
-[@FriedrichVoelker] - Friedrich Völker <friedrich@enten.dev>
+[@msandova27](https://github.com/msandova27) - Matteo Sandoval   
+[@FriedrichVoelker](https://github.com/FriedrichVoelker) - Friedrich Völker <friedrich@enten.dev>
